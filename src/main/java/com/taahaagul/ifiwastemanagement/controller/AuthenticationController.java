@@ -23,15 +23,6 @@ public class AuthenticationController {
 
     private final AuthenticationService service;
 
-    @PostMapping("/register")
-    public ResponseEntity<String> register(
-            @Valid @RequestBody RegisterRequest request
-    ) {
-        service.register(request);
-        return ResponseEntity.status(OK)
-                .body("User Registiration Successfully");
-    }
-
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @Valid @RequestBody LoginRequest request
@@ -45,12 +36,6 @@ public class AuthenticationController {
             HttpServletResponse response
     ) throws IOException {
         service.refreshToken(request, response);
-    }
-
-    @GetMapping("/accountVerification/{token}")
-    public ResponseEntity<String> verifyAccount(@PathVariable String token) {
-        service.verifyAccount(token);
-        return new ResponseEntity<>("Account Activated Successfully", OK);
     }
 
     @PostMapping("/forgetMyPassword/{email}")

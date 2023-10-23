@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Permission {
 
-    TG_READ("tg:read"),
-    TG_UPDATE("tg:update"),
-    TG_CREATE("tg:create"),
-    TG_DELETE("tg:delete"),
+    USER_CREATE("user:create"),
+    USER_READ("user:read"),
+    USER_UPDATE("user:update"),
+    USER_DELETE("user:delete"),
     ;
 
     @Getter

@@ -60,15 +60,16 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .memberSince(LocalDate.now())
                 .role(Role.USER)
-                .enabled(false)
+                .enabled(true)
                 .build();
         userRepository.save(user);
 
-        String token = generateVerificationToken(user);
-        mailService.sendMail(new NotificationEmail("Please Activate your Account",
-                user.getEmail(), "Thank you for signing up to Spring Reddit, " +
-                "please click on the below url to activate your account : " +
-                "http://localhost:8080/api/auth/accountVerification/" + token));
+        mailService.sendMail(new NotificationEmail("Ifi Waste Management Credentials",
+                user.getEmail(), "Congratulations, you have been registered in the " +
+                "IFI Waste Management System, \n" +
+                "Your credentials are below : \n" +
+                "Username : " + request.getEmail() + "\n" +
+                "Password : " + request.getPassword()));
     }
 
     public String generateVerificationToken(User user) {
@@ -96,20 +97,6 @@ public class AuthenticationService {
 
         verificationTokenRepository.save(verificationToken);
         return token;
-    }
-
-    public void verifyAccount(String token) {
-        Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
-        fetchUserAndEnable(verificationToken.orElseThrow(() -> new UserNotFoundException("Invalid Token")));
-    }
-
-    private void fetchUserAndEnable(VerificationToken verificationToken) {
-        String username = verificationToken.getUser().getUsername();
-        User  user = userRepository.findByEmail(username)
-                .orElseThrow(()-> new UserNotFoundException("User not found with name -" + username));
-        user.setEnabled(true);
-        verificationTokenRepository.delete(verificationToken);
-        userRepository.save(user);
     }
 
     public AuthenticationResponse authenticate(LoginRequest request) {

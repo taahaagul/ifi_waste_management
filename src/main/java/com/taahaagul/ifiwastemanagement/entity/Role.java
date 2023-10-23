@@ -16,22 +16,21 @@ public enum Role {
 
     USER(Collections.emptySet()),
 
-    ADMIN(
+    SUPER_ADMIN(
             Set.of(
-                    TG_READ,
-                    TG_CREATE,
-                    TG_UPDATE,
-                    TG_DELETE
+                    USER_CREATE,
+                    USER_READ,
+                    USER_UPDATE,
+                    USER_DELETE
             )
     ),
 
-    MANAGER(
+    ADMIN(
             Set.of(
-                    TG_READ,
-                    TG_CREATE
+                    USER_READ,
+                    USER_UPDATE
             )
     )
-
     ;
 
     @Getter
