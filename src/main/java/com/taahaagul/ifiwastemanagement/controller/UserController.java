@@ -2,6 +2,7 @@ package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.request.RegisterRequest;
 import com.taahaagul.ifiwastemanagement.request.UserChangePaswRequest;
+import com.taahaagul.ifiwastemanagement.request.UserUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.UserResponse;
 import com.taahaagul.ifiwastemanagement.service.AuthenticationService;
 import com.taahaagul.ifiwastemanagement.service.UserService;
@@ -45,6 +46,21 @@ public class UserController {
         authenticationService.register(request);
         return ResponseEntity.status(OK)
                 .body("User Registiration Successfully");
+    }
+
+    @PutMapping
+    @PreAuthorize("hasAuthority('user:update')")
+    public ResponseEntity<UserResponse> updateUser(@RequestBody UserUpdateRequest request) {
+        return ResponseEntity.status(OK)
+                .body(userService.updateUser(request));
+    }
+
+    @DeleteMapping("/{userId}")
+    @PreAuthorize("hasAuthority('user:delete')")
+    public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.status(OK)
+                .body("User deleted successfully");
     }
 
     @PutMapping("/change-password")

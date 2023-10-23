@@ -4,6 +4,7 @@ import com.taahaagul.ifiwastemanagement.entity.User;
 import com.taahaagul.ifiwastemanagement.exception.UserNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.UserRepository;
 import com.taahaagul.ifiwastemanagement.request.UserChangePaswRequest;
+import com.taahaagul.ifiwastemanagement.request.UserUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,5 +39,27 @@ public class UserService {
             userRepository.save(user);
         } else
             throw new UserNotFoundException("Password unmatched!");
+    }
+
+    public UserResponse updateUser(UserUpdateRequest request) {
+        User findedUser = userRepository.findById(request.getId())
+                .orElseThrow(()-> new UserNotFoundException("User is not founded!"));
+
+        findedUser.setFirstName(request.getFirstName());
+        findedUser.setLastName(request.getLastName());
+        findedUser.setUserName(request.getUserName());
+        findedUser.setEmail(request.getEmail());
+        findedUser.setRole(request.getRole());
+        findedUser.setEnabled(request.isEnabled());
+
+        userRepository.save(findedUser);
+        return new UserResponse(findedUser);
+    }
+
+    public void deleteUser(Long userId) {
+        User findedUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User is not founded"));
+
+        userRepository.delete(findedUser);
     }
 }
