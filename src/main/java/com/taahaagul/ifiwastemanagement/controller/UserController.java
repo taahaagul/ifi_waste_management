@@ -32,6 +32,13 @@ public class UserController {
                 .body(userService.getCurrentUser());
     }
 
+    @GetMapping("/{userId}")
+    @PreAuthorize("hasAuthority('user:read')")
+    public ResponseEntity<UserResponse> getAnyUser(@PathVariable Long userId) {
+        return ResponseEntity.status(OK)
+                .body(userService.getAnyUser(userId));
+    }
+
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('user:read')")
     public ResponseEntity<List<UserResponse>> getAllUsers() {

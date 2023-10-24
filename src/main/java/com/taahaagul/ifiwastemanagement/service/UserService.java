@@ -99,5 +99,12 @@ public class UserService {
 
         userRepository.save(foundUser);
     }
+
+    public UserResponse getAnyUser(Long userId) {
+        User foundUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User is not founded"));
+
+        return new UserResponse(foundUser);
+    }
 }
 
