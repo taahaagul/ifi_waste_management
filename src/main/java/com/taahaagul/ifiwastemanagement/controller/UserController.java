@@ -89,4 +89,12 @@ public class UserController {
         return ResponseEntity.status(OK)
                 .body("User role changed succsessfully");
     }
+
+    @PutMapping("/change-enabled/{userId}")
+    @PreAuthorize("hasAuthority('enabled:change')")
+    public ResponseEntity<String> changeUserEnabled(@PathVariable Long userId) {
+        userService.changeUserEnabled(userId);
+        return ResponseEntity.status(OK)
+                .body("User enabled status changed");
+    }
 }

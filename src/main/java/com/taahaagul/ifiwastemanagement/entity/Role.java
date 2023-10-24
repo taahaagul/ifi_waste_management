@@ -21,7 +21,8 @@ public enum Role {
                     USER_UPDATE,
                     USER_DELETE,
                     ROLE_READ,
-                    ROLE_CHANGE
+                    ROLE_CHANGE,
+                    ENABLED_CHANGE
             )
     ),
 

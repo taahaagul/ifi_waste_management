@@ -83,5 +83,21 @@ public class UserService {
         foundUser.setRole(Role.valueOf(userRole));
         userRepository.save(foundUser);
     }
+
+    public void changeUserEnabled(Long userId) {
+        User foundUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User is not founded"));
+
+        if(foundUser.getRole().equals(Role.SUPER_ADMIN)) {
+            throw new UserNotFoundException("SUPER_ADMIN can not change enabled");
+        }
+
+        if(foundUser.isEnabled())
+            foundUser.setEnabled(false);
+        else
+            foundUser.setEnabled(true);
+
+        userRepository.save(foundUser);
+    }
 }
 

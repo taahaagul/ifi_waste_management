@@ -11,7 +11,8 @@ public enum Permission {
     USER_UPDATE("user:update"),
     USER_DELETE("user:delete"),
     ROLE_READ("role:read"),
-    ROLE_CHANGE("role:change")
+    ROLE_CHANGE("role:change"),
+    ENABLED_CHANGE("enabled:change")
     ;
 
     @Getter
