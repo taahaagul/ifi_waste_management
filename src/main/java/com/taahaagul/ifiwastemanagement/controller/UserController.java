@@ -1,5 +1,6 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
+import com.taahaagul.ifiwastemanagement.entity.Role;
 import com.taahaagul.ifiwastemanagement.request.RegisterRequest;
 import com.taahaagul.ifiwastemanagement.request.UserChangePaswRequest;
 import com.taahaagul.ifiwastemanagement.request.UserUpdateRequest;
@@ -69,5 +70,23 @@ public class UserController {
         userService.changePassword(request);
         return ResponseEntity.status(HttpStatus.ACCEPTED)
                 .body("Change Password Successfully");
+    }
+
+    @GetMapping("/role")
+    @PreAuthorize("hasAuthority('role:read')")
+    public ResponseEntity<List<Role>> getAllRole() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userService.getAllRole());
+    }
+
+    @PutMapping("/update-role/{userId}/{userRole}")
+    @PreAuthorize("hasAuthority('role:change')")
+    public ResponseEntity<String> updateUserRole(
+            @PathVariable Long userId,
+            @PathVariable String userRole
+    ) {
+        userService.updateUserRole(userId, userRole);
+        return ResponseEntity.status(OK)
+                .body("User role changed succsessfully");
     }
 }

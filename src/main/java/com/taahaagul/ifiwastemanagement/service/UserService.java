@@ -1,5 +1,6 @@
 package com.taahaagul.ifiwastemanagement.service;
 
+import com.taahaagul.ifiwastemanagement.entity.Role;
 import com.taahaagul.ifiwastemanagement.entity.User;
 import com.taahaagul.ifiwastemanagement.exception.UserNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.UserRepository;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,17 +52,36 @@ public class UserService {
         findedUser.setLastName(request.getLastName());
         findedUser.setUserName(request.getUserName());
         findedUser.setEmail(request.getEmail());
-        findedUser.setRole(request.getRole());
-        findedUser.setEnabled(request.isEnabled());
 
         userRepository.save(findedUser);
         return new UserResponse(findedUser);
     }
 
     public void deleteUser(Long userId) {
-        User findedUser = userRepository.findById(userId)
+        User foundUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User is not founded"));
 
-        userRepository.delete(findedUser);
+        if(foundUser.getRole().equals(Role.SUPER_ADMIN)) {
+            throw new UserNotFoundException("SUPER_ADMIN can not be deleted");
+        }
+
+        userRepository.delete(foundUser);
+    }
+
+    public List<Role> getAllRole() {
+        return Arrays.asList(Role.values());
+    }
+
+    public void updateUserRole(Long userId, String userRole) {
+        User foundUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User is not founded"));
+
+        if(foundUser.getRole().equals(Role.SUPER_ADMIN)) {
+            throw new UserNotFoundException("SUPER_ADMIN can not change role");
+        }
+
+        foundUser.setRole(Role.valueOf(userRole));
+        userRepository.save(foundUser);
     }
 }
+

@@ -14,23 +14,26 @@ import static com.taahaagul.ifiwastemanagement.entity.Permission.*;
 @RequiredArgsConstructor
 public enum Role {
 
-    USER(Collections.emptySet()),
-
     SUPER_ADMIN(
             Set.of(
                     USER_CREATE,
                     USER_READ,
                     USER_UPDATE,
-                    USER_DELETE
+                    USER_DELETE,
+                    ROLE_READ,
+                    ROLE_CHANGE
             )
     ),
 
     ADMIN(
             Set.of(
                     USER_READ,
-                    USER_UPDATE
+                    USER_UPDATE,
+                    ROLE_READ
             )
-    )
+    ),
+
+    USER(Collections.emptySet())
     ;
 
     @Getter
