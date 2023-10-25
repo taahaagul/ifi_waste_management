@@ -10,6 +10,7 @@ import com.taahaagul.ifiwastemanagement.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
 import java.util.Arrays;
@@ -28,6 +29,7 @@ public class UserService {
         return new UserResponse(authenticationService.getCurrentUser());
     }
 
+    @Transactional(readOnly = true)
     public List<UserResponse> getAllUsers() {
         List<User> list = userRepository.findAll();
         return list.stream()
@@ -35,6 +37,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void changePassword(UserChangePaswRequest request) {
         User user = authenticationService.getCurrentUser();
         if(passwordEncoder.matches(request.getOldPasw(), user.getPassword())) {
@@ -44,19 +47,25 @@ public class UserService {
             throw new UserNotFoundException("Password unmatched!");
     }
 
+    @Transactional
     public UserResponse updateUser(UserUpdateRequest request) {
-        User findedUser = userRepository.findById(request.getId())
+        User foundUser = userRepository.findById(request.getId())
                 .orElseThrow(()-> new UserNotFoundException("User is not founded!"));
 
-        findedUser.setFirstName(request.getFirstName());
-        findedUser.setLastName(request.getLastName());
-        findedUser.setUserName(request.getUserName());
-        findedUser.setEmail(request.getEmail());
+        if(foundUser.getRole().equals(Role.SUPER_ADMIN)) {
+            throw new UserNotFoundException("SUPER_ADMIN can not be deleted");
+        }
 
-        userRepository.save(findedUser);
-        return new UserResponse(findedUser);
+        foundUser.setFirstName(request.getFirstName());
+        foundUser.setLastName(request.getLastName());
+        foundUser.setUserName(request.getUserName());
+        foundUser.setEmail(request.getEmail());
+
+        userRepository.save(foundUser);
+        return new UserResponse(foundUser);
     }
 
+    @Transactional
     public void deleteUser(Long userId) {
         User foundUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User is not founded"));
@@ -72,18 +81,23 @@ public class UserService {
         return Arrays.asList(Role.values());
     }
 
+    @Transactional
     public void updateUserRole(Long userId, String userRole) {
         User foundUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User is not founded"));
 
-        if(foundUser.getRole().equals(Role.SUPER_ADMIN)) {
-            throw new UserNotFoundException("SUPER_ADMIN can not change role");
-        }
+//        if(foundUser.getRole().equals(Role.SUPER_ADMIN)) {
+//            throw new UserNotFoundException("SUPER_ADMIN can not change role");
+//        }
+
+        if(userRole.equals("SUPER_ADMIN"))
+            throw new UserNotFoundException("U can not set role 'SUPER_ADMIN");
 
         foundUser.setRole(Role.valueOf(userRole));
         userRepository.save(foundUser);
     }
 
+    @Transactional
     public void changeUserEnabled(Long userId) {
         User foundUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User is not founded"));
@@ -100,6 +114,7 @@ public class UserService {
         userRepository.save(foundUser);
     }
 
+    @Transactional(readOnly = true)
     public UserResponse getAnyUser(Long userId) {
         User foundUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User is not founded"));
