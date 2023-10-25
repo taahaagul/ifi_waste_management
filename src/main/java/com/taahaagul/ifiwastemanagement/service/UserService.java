@@ -86,9 +86,9 @@ public class UserService {
         User foundUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User is not founded"));
 
-//        if(foundUser.getRole().equals(Role.SUPER_ADMIN)) {
-//            throw new UserNotFoundException("SUPER_ADMIN can not change role");
-//        }
+        if(foundUser.getRole().equals(Role.SUPER_ADMIN)) {
+            throw new UserNotFoundException("SUPER_ADMIN can not change role");
+        }
 
         if(userRole.equals("SUPER_ADMIN"))
             throw new UserNotFoundException("U can not set role 'SUPER_ADMIN");
