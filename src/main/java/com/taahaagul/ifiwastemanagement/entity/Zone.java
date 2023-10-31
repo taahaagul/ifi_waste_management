@@ -15,7 +15,7 @@ public class Zone {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
     private String zoneName;
     private String zoneCode;
 

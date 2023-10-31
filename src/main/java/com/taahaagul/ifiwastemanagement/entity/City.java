@@ -17,7 +17,7 @@ public class City {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
     private String cityName;
     private String cityCode;
 

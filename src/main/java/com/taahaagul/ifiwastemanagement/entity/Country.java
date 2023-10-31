@@ -17,7 +17,7 @@ public class Country {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
     private String countryName;
     private String counrtyCode;
 

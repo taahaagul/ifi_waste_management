@@ -17,7 +17,7 @@ public class Branch {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
     private String branchName;
     private String branchCode;
 
