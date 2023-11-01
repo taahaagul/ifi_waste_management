@@ -6,8 +6,12 @@ import com.taahaagul.ifiwastemanagement.exception.UserNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.BranchRepository;
 import com.taahaagul.ifiwastemanagement.repository.DistrictRepository;
 import com.taahaagul.ifiwastemanagement.request.BranchRequest;
+import com.taahaagul.ifiwastemanagement.response.BranchResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,5 +31,13 @@ public class BranchService {
                 .build();
 
         branchRepository.save(branch);
+    }
+
+    public List<BranchResponse> getAllBranch() {
+        List<Branch> branches = branchRepository.findAll();
+
+        return branches.stream()
+                .map(branch -> new BranchResponse(branch))
+                .collect(Collectors.toList());
     }
 }

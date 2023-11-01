@@ -6,8 +6,12 @@ import com.taahaagul.ifiwastemanagement.exception.UserNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.CityRepository;
 import com.taahaagul.ifiwastemanagement.repository.DistrictRepository;
 import com.taahaagul.ifiwastemanagement.request.DistrictRequest;
+import com.taahaagul.ifiwastemanagement.response.DistrictResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,5 +31,13 @@ public class DistrictService {
                 .build();
 
         districtRepository.save(district);
+    }
+
+    public List<DistrictResponse> getAllDistrict() {
+        List<District> districts = districtRepository.findAll();
+
+        return districts.stream()
+                .map(district -> new DistrictResponse(district))
+                .collect(Collectors.toList());
     }
 }

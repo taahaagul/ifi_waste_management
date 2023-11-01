@@ -6,8 +6,12 @@ import com.taahaagul.ifiwastemanagement.exception.UserNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.BranchRepository;
 import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
 import com.taahaagul.ifiwastemanagement.request.ZoneRequest;
+import com.taahaagul.ifiwastemanagement.response.ZoneResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,5 +31,13 @@ public class ZoneService {
                 .build();
 
         zoneRepository.save(zone);
+    }
+
+    public List<ZoneResponse> getAllZone() {
+        List<Zone> zones = zoneRepository.findAll();
+
+        return zones.stream()
+                .map(zone -> new ZoneResponse(zone))
+                .collect(Collectors.toList());
     }
 }

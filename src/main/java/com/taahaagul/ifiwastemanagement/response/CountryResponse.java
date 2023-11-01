@@ -6,12 +6,12 @@ import lombok.Data;
 @Data
 public class CountryResponse {
 
-    private Long id;
+    private Long countryId;
     private String countryName;
     private String countryCode;
 
     public CountryResponse(Country entity) {
-        this.id = entity.getId();
+        this.countryId = entity.getId();
         this.countryName = entity.getCountryName();
         this.countryCode = entity.getCounrtyCode();
     }
