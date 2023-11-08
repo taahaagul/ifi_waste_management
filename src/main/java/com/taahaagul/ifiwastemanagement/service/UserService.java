@@ -37,7 +37,6 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public void changePassword(UserChangePaswRequest request) {
         User user = authenticationService.getCurrentUser();
         if(passwordEncoder.matches(request.getOldPasw(), user.getPassword())) {
@@ -61,8 +60,7 @@ public class UserService {
         foundUser.setUserName(request.getUserName());
         foundUser.setEmail(request.getEmail());
 
-        userRepository.save(foundUser);
-        return new UserResponse(foundUser);
+        return new UserResponse(userRepository.save(foundUser));
     }
 
     @Transactional

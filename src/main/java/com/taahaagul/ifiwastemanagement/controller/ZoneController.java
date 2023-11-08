@@ -1,7 +1,6 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.request.ZoneRequest;
-import com.taahaagul.ifiwastemanagement.response.BranchResponse;
 import com.taahaagul.ifiwastemanagement.response.ZoneResponse;
 import com.taahaagul.ifiwastemanagement.service.ZoneService;
 import lombok.RequiredArgsConstructor;
