@@ -3,6 +3,8 @@ package com.taahaagul.ifiwastemanagement.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -20,4 +22,7 @@ public class Zone {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Branch branch;
+
+    @OneToMany(mappedBy = "zone", fetch = FetchType.LAZY)
+    private List<Customer> customers;
 }
