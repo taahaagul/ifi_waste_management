@@ -1,13 +1,13 @@
 package com.taahaagul.ifiwastemanagement.request;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
 public class CountryRequest {
 
-    @NotBlank(message = "countryName is required")
+    @NotEmpty(message = "countryName is requiured")
     private String countryName;
-    @NotBlank(message = "countryCode is requiured")
+    @NotEmpty(message = "countryCode is requiured")
     private String countryCode;
 }

@@ -7,20 +7,27 @@ import lombok.Data;
 @Data
 public class CustomerRequest {
 
-    @NotNull(message = "zoneId can not be a null or empty")
+    @NotNull(message = "zoneId cannot be null")
     private Long zoneId;
-    @NotNull(message = "customerName can not be a null or empty")
+
+    @NotEmpty(message = "customerName cannot be null or empty")
     private String customerName;
-    @NotNull(message = "houseNumber can not be a null or empty")
+
+    @NotEmpty(message = "houseNumber cannot be null or empty")
     private String houseNumber;
-    @NotNull(message = "mobileNumber can not be a null or empty")
+
+    @NotEmpty(message = "mobileNumber cannot be null or empty")
     private String mobileNumber;
-    @NotNull(message = "specialRate can not be a null or empty")
+
+    @NotEmpty(message = "specialRate cannot be null or empty")
     private String specialRate;
-    @NotNull(message = "latitude can not be a null or empty")
+
+    @NotEmpty(message = "latitude cannot be null")
     private String latitude;
-    @NotNull(message = "longitude can not be a null or empty")
+
+    @NotEmpty(message = "longitude cannot be null")
     private String longitude;
-    @NotNull(message = "status can not be a null or empty")
-    private boolean enabled;
+
+    @NotNull(message = "status cannot be null")
+    private Boolean enabled;
 }

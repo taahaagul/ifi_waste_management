@@ -37,7 +37,7 @@ public class CustomerService {
                 .specialRate(customerRequest.getSpecialRate())
                 .latitude(customerRequest.getLatitude())
                 .longitude(customerRequest.getLongitude())
-                .enabled(customerRequest.isEnabled())
+                .enabled(customerRequest.getEnabled())
                 .createdAt(LocalDateTime.now())
                 .creeatedBy(currentUserName)
                 .zone(foundedZone)

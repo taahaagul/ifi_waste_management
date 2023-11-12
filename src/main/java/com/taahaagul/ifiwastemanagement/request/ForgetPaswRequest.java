@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 public class ForgetPaswRequest {
 
-    @NotEmpty(message = "Token can not be a null or empty")
+    @NotEmpty(message = "token can not be a null or empty")
     private String token;
-    @NotEmpty(message = "newPasw can not be a null or empty")
+    @NotBlank(message = "newPasw can not be a null or empty")
     private String newPasw;
 }

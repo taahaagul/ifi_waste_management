@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 public class LoginRequest {
 
-    @NotEmpty(message = "Email can not be a null or empty")
+    @NotBlank(message = "Email can not be a null or empty")
     private String email;
-    @NotEmpty(message = "Password can not be a null or empty")
+    @NotBlank(message = "Password can not be a null or empty")
     private String password;
 }

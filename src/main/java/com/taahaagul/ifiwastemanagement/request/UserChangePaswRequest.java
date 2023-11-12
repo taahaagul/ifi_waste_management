@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 public class UserChangePaswRequest {
 
-    @NotBlank
+    @NotBlank(message = "Old password can not be blank")
     private String oldPasw;
-    @NotBlank
+    @NotBlank(message = "New password can not be blank")
     private String newPasw;
 }
