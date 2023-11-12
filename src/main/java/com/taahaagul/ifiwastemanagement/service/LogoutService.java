@@ -1,6 +1,6 @@
 package com.taahaagul.ifiwastemanagement.service;
 
-import com.taahaagul.ifiwastemanagement.exception.UserNotFoundException;
+import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,6 +38,6 @@ public class LogoutService implements LogoutHandler {
             tokenRepository.delete(storedToken);
             SecurityContextHolder.clearContext();
         } else
-            throw new UserNotFoundException("Token is not found!");
+            throw new ResourceNotFoundException("Logout", "Token", jwt);
     }
 }

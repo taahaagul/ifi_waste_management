@@ -2,7 +2,7 @@ package com.taahaagul.ifiwastemanagement.service;
 
 import com.taahaagul.ifiwastemanagement.entity.Customer;
 import com.taahaagul.ifiwastemanagement.entity.Zone;
-import com.taahaagul.ifiwastemanagement.exception.UserNotFoundException;
+import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.CustomerRepository;
 import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
 import com.taahaagul.ifiwastemanagement.request.CustomerRequest;
@@ -25,7 +25,7 @@ public class CustomerService {
 
     public void createCustomer(CustomerRequest customerRequest) {
         Zone foundedZone = zoneRepository.findById(customerRequest.getZoneId())
-                .orElseThrow(() -> new UserNotFoundException("Zone is not founded"));
+                .orElseThrow(() -> new ResourceNotFoundException("Zone", "zoneId", customerRequest.getZoneId().toString()));
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserName = authentication.getName();

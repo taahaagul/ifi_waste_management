@@ -2,7 +2,7 @@ package com.taahaagul.ifiwastemanagement.service;
 
 import com.taahaagul.ifiwastemanagement.entity.Branch;
 import com.taahaagul.ifiwastemanagement.entity.District;
-import com.taahaagul.ifiwastemanagement.exception.UserNotFoundException;
+import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.BranchRepository;
 import com.taahaagul.ifiwastemanagement.repository.DistrictRepository;
 import com.taahaagul.ifiwastemanagement.request.BranchRequest;
@@ -22,7 +22,7 @@ public class BranchService {
 
     public void createBranch(BranchRequest branchRequest) {
         District foundedDistrict = districtRepository.findById(branchRequest.getDistrictId())
-                .orElseThrow(() -> new UserNotFoundException("District is not founded"));
+                .orElseThrow(() -> new ResourceNotFoundException("Branch", "districtId", branchRequest.getDistrictId().toString()));
 
         Branch branch = Branch.builder()
                 .branchName(branchRequest.getBranchName())

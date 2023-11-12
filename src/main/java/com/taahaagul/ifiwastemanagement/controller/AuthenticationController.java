@@ -2,7 +2,6 @@ package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.request.ForgetPaswRequest;
 import com.taahaagul.ifiwastemanagement.request.LoginRequest;
-import com.taahaagul.ifiwastemanagement.request.RegisterRequest;
 import com.taahaagul.ifiwastemanagement.response.AuthenticationResponse;
 import com.taahaagul.ifiwastemanagement.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;

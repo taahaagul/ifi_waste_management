@@ -2,7 +2,7 @@ package com.taahaagul.ifiwastemanagement.service;
 
 import com.taahaagul.ifiwastemanagement.entity.City;
 import com.taahaagul.ifiwastemanagement.entity.District;
-import com.taahaagul.ifiwastemanagement.exception.UserNotFoundException;
+import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.CityRepository;
 import com.taahaagul.ifiwastemanagement.repository.DistrictRepository;
 import com.taahaagul.ifiwastemanagement.request.DistrictRequest;
@@ -22,7 +22,7 @@ public class DistrictService {
 
     public void createDistrict(DistrictRequest districtRequest) {
         City foundedCity = cityRepository.findById(districtRequest.getCityId())
-                .orElseThrow(() -> new UserNotFoundException("City is not founded"));
+                .orElseThrow(() -> new ResourceNotFoundException("District", "cityId", districtRequest.getCityId().toString()));
 
         District district = District.builder()
                 .districtName(districtRequest.getDistrictName())

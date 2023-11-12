@@ -2,7 +2,7 @@ package com.taahaagul.ifiwastemanagement.service;
 
 import com.taahaagul.ifiwastemanagement.entity.City;
 import com.taahaagul.ifiwastemanagement.entity.Country;
-import com.taahaagul.ifiwastemanagement.exception.UserNotFoundException;
+import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.CityRepository;
 import com.taahaagul.ifiwastemanagement.repository.CountryRepository;
 import com.taahaagul.ifiwastemanagement.request.CityRequest;
@@ -22,7 +22,7 @@ public class CityService {
 
     public void createCity(CityRequest request) {
         Country foundedCountry = countryRepository.findById(request.getCountryId())
-                .orElseThrow(() -> new UserNotFoundException("Country is not founded"));
+                .orElseThrow(() -> new ResourceNotFoundException("City", "countryId", request.getCountryId().toString()));
 
         City city = City.builder()
                 .cityName(request.getCityName())

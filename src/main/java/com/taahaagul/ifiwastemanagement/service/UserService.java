@@ -2,7 +2,9 @@ package com.taahaagul.ifiwastemanagement.service;
 
 import com.taahaagul.ifiwastemanagement.entity.Role;
 import com.taahaagul.ifiwastemanagement.entity.User;
-import com.taahaagul.ifiwastemanagement.exception.UserNotFoundException;
+import com.taahaagul.ifiwastemanagement.exception.IncorrectValueException;
+import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
+import com.taahaagul.ifiwastemanagement.exception.RoleUnmathcedException;
 import com.taahaagul.ifiwastemanagement.repository.UserRepository;
 import com.taahaagul.ifiwastemanagement.request.UserChangePaswRequest;
 import com.taahaagul.ifiwastemanagement.request.UserUpdateRequest;
@@ -12,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,16 +44,16 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(request.getNewPasw()));
             userRepository.save(user);
         } else
-            throw new UserNotFoundException("Password unmatched!");
+            throw new IncorrectValueException("Old Password is incorrect!");
     }
 
     @Transactional
     public UserResponse updateUser(UserUpdateRequest request) {
         User foundUser = userRepository.findById(request.getId())
-                .orElseThrow(()-> new UserNotFoundException("User is not founded!"));
+                .orElseThrow(()-> new ResourceNotFoundException("User", "userId", request.getId().toString()));
 
         if(foundUser.getRole().equals(Role.SUPER_ADMIN)) {
-            throw new UserNotFoundException("SUPER_ADMIN can not be deleted");
+            throw new RoleUnmathcedException(foundUser.getRole(), "Untouchable!");
         }
 
         foundUser.setFirstName(request.getFirstName());
@@ -66,10 +67,10 @@ public class UserService {
     @Transactional
     public void deleteUser(Long userId) {
         User foundUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User is not founded"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId.toString()));
 
         if(foundUser.getRole().equals(Role.SUPER_ADMIN)) {
-            throw new UserNotFoundException("SUPER_ADMIN can not be deleted");
+            throw new RoleUnmathcedException(foundUser.getRole(), "Untouchable!");
         }
 
         userRepository.delete(foundUser);
@@ -82,14 +83,14 @@ public class UserService {
     @Transactional
     public void updateUserRole(Long userId, String userRole) {
         User foundUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User is not founded"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId.toString()));
 
         if(foundUser.getRole().equals(Role.SUPER_ADMIN)) {
-            throw new UserNotFoundException("SUPER_ADMIN can not change role");
+            throw new RoleUnmathcedException(foundUser.getRole(), "Untouchable!");
         }
 
         if(userRole.equals("SUPER_ADMIN"))
-            throw new UserNotFoundException("U can not set role 'SUPER_ADMIN");
+            throw new RoleUnmathcedException(Role.SUPER_ADMIN, "Not Adjustable!");
 
         foundUser.setRole(Role.valueOf(userRole));
         userRepository.save(foundUser);
@@ -98,10 +99,10 @@ public class UserService {
     @Transactional
     public void changeUserEnabled(Long userId) {
         User foundUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User is not founded"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId.toString()));
 
         if(foundUser.getRole().equals(Role.SUPER_ADMIN)) {
-            throw new UserNotFoundException("SUPER_ADMIN can not change enabled");
+            throw new RoleUnmathcedException(foundUser.getRole(), "Not Adjustable!");
         }
 
         if(foundUser.isEnabled())
@@ -115,7 +116,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponse getAnyUser(Long userId) {
         User foundUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User is not founded"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId.toString()));;
 
         return new UserResponse(foundUser);
     }

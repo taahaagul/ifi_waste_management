@@ -1,7 +1,7 @@
 package com.taahaagul.ifiwastemanagement.service;
 
 import com.taahaagul.ifiwastemanagement.entity.NotificationEmail;
-import com.taahaagul.ifiwastemanagement.exception.UserNotFoundException;
+import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
@@ -33,7 +33,9 @@ public class MailService {
             log.info("Activation email sent!!");
         } catch (MailException e) {
             log.error("Exception occurred when sending mail", e);
-            throw new UserNotFoundException("Exception occurred when sending mail to " + notificationEmail.getRecipient(), e);
+            throw new ResourceNotFoundException(
+                    "Exception occurred when sending mail to " + notificationEmail.getRecipient(),
+                    "MailException", "mailSender.send(messagePreparator)");
         }
     }
 }

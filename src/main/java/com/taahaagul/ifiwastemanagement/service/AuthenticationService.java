@@ -3,7 +3,8 @@ package com.taahaagul.ifiwastemanagement.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taahaagul.ifiwastemanagement.config.JwtService;
 import com.taahaagul.ifiwastemanagement.entity.*;
-import com.taahaagul.ifiwastemanagement.exception.UserNotFoundException;
+import com.taahaagul.ifiwastemanagement.exception.IncorrectValueException;
+import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.TokenRepository;
 import com.taahaagul.ifiwastemanagement.repository.UserRepository;
 import com.taahaagul.ifiwastemanagement.repository.VerificationTokenRepository;
@@ -45,11 +46,11 @@ public class AuthenticationService {
     public void register(RegisterRequest request) {
         Optional<User> existingUserName = userRepository.findByUserName(request.getUserName());
         if(existingUserName.isPresent())
-            throw new UserNotFoundException("Username already is exist");
+            throw new IncorrectValueException("Username already exist!");
 
         Optional<User> existingUser = userRepository.findByEmail(request.getEmail());
         if (existingUser.isPresent()) {
-            throw new UserNotFoundException("Email already exist!");
+            throw new IncorrectValueException("Email already exist!");
         }
 
         var user = User.builder()
@@ -176,13 +177,13 @@ public class AuthenticationService {
 
     public User getCurrentUser() {
         User user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
-                .orElseThrow(() -> new UserNotFoundException("Current user is not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", "email"));
         return user;
     }
 
     public void forgetMyPaswToken(String email) {
         User existingUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User is not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 
         String token = generateVerificationToken(existingUser);
 
@@ -194,7 +195,7 @@ public class AuthenticationService {
 
         VerificationToken verificationToken = verificationTokenRepository
                 .findByToken(forgetPaswRequest.getToken())
-                .orElseThrow(() -> new UserNotFoundException("Token is not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException("VerificationToken", "Token", forgetPaswRequest.getToken()));
 
         Date now = new Date();
 
@@ -203,7 +204,7 @@ public class AuthenticationService {
             user.setPassword(passwordEncoder.encode(forgetPaswRequest.getNewPasw()));
             userRepository.save(user);
         } else {
-            throw new UserNotFoundException("Token is expired");
+            throw new IncorrectValueException("Token is expired!");
         }
     }
 }
