@@ -3,6 +3,8 @@ package com.taahaagul.ifiwastemanagement.response;
 import com.taahaagul.ifiwastemanagement.entity.Zone;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class ZoneResponse {
 
@@ -26,6 +28,11 @@ public class ZoneResponse {
     private String countryName;
     private String countryCode;
 
+    private LocalDateTime createdAt;
+    private String createdBy;
+    private LocalDateTime updatedAt;
+    private String updatedBy;
+
 
     public ZoneResponse(Zone entity) {
         this.zoneId = entity.getId();
@@ -47,5 +54,10 @@ public class ZoneResponse {
         this.countryId = entity.getBranch().getDistrict().getCity().getCountry().getId();
         this.countryName = entity.getBranch().getDistrict().getCity().getCountry().getCountryName();
         this.countryCode = entity.getBranch().getDistrict().getCity().getCountry().getCounrtyCode();
+
+        this.createdAt = entity.getCreatedAt();
+        this.createdBy = entity.getCreatedBy();
+        this.updatedAt = entity.getUpdatedAt();
+        this.updatedBy = entity.getUpdatedBy();
     }
 }

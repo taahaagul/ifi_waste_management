@@ -8,11 +8,8 @@ import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
 import com.taahaagul.ifiwastemanagement.request.CustomerRequest;
 import com.taahaagul.ifiwastemanagement.response.CustomerResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,9 +24,6 @@ public class CustomerService {
         Zone foundedZone = zoneRepository.findById(customerRequest.getZoneId())
                 .orElseThrow(() -> new ResourceNotFoundException("Zone", "zoneId", customerRequest.getZoneId().toString()));
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserName = authentication.getName();
-
         Customer customer = Customer.builder()
                 .customerName(customerRequest.getCustomerName())
                 .houseNumber(customerRequest.getHouseNumber())
@@ -38,8 +32,6 @@ public class CustomerService {
                 .latitude(customerRequest.getLatitude())
                 .longitude(customerRequest.getLongitude())
                 .enabled(customerRequest.getEnabled())
-                .createdAt(LocalDateTime.now())
-                .creeatedBy(currentUserName)
                 .zone(foundedZone)
                 .build();
 
@@ -55,7 +47,10 @@ public class CustomerService {
     }
 
     public List<CustomerResponse> getZoneCustomers(Long zoneId) {
-        List<Customer> zoneCustomers = customerRepository.findByZoneId(zoneId);
+        Zone foundedZone = zoneRepository.findById(zoneId)
+                .orElseThrow(() -> new ResourceNotFoundException("Zone", "zoneId", zoneId.toString()));
+
+        List<Customer> zoneCustomers = customerRepository.findByZone(foundedZone);
 
         return zoneCustomers.stream()
                 .map(zoneCustomer -> new CustomerResponse(zoneCustomer))

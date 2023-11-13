@@ -4,7 +4,7 @@ import com.taahaagul.ifiwastemanagement.entity.Role;
 import com.taahaagul.ifiwastemanagement.entity.User;
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 public class UserResponse {
@@ -14,9 +14,12 @@ public class UserResponse {
     private String lastName;
     private String userName;
     private String email;
-    private LocalDate memberSince;
     private boolean enabled;
     private Role role;
+    private LocalDateTime createdAt;
+    private String createdBy;
+    private LocalDateTime updatedAt;
+    private String updatedBy;
 
     public UserResponse(User entity) {
         this.id = entity.getId();
@@ -24,8 +27,11 @@ public class UserResponse {
         this.lastName = entity.getLastName();
         this.userName = entity.getUserName();
         this.email = entity.getEmail();
-        this.memberSince = entity.getMemberSince();
         this.enabled = entity.isEnabled();
         this.role = entity.getRole();
+        this.createdAt = entity.getCreatedAt();
+        this.createdBy = entity.getCreatedBy();
+        this.updatedAt = entity.getUpdatedAt();
+        this.updatedBy = entity.getUpdatedBy();
     }
 }

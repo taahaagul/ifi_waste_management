@@ -2,8 +2,7 @@ package com.taahaagul.ifiwastemanagement.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Date;
 
@@ -17,7 +16,8 @@ import java.util.Date;
 public class VerificationToken {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private Long id;
     private String token;
     private Date expirationTime;

@@ -1,6 +1,5 @@
 package com.taahaagul.ifiwastemanagement.request;
 
-import com.taahaagul.ifiwastemanagement.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

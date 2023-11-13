@@ -11,8 +11,8 @@
 	<groupId>com.taahaagul</groupId>
 	<artifactId>ifi-waste-management</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>tg-jwt-security</name>
-	<description>Demo project for Spring Boot</description>
+	<name>ifi-waste-management</name>
+	<description>Backend Developer Taha Gul</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>

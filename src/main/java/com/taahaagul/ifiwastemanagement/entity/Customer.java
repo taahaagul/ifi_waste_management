@@ -2,8 +2,8 @@ package com.taahaagul.ifiwastemanagement.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -12,10 +12,11 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Customer {
+public class Customer extends BaseEntity{
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private Long id;
     private String customerName;
     private String houseNumber;
@@ -24,8 +25,6 @@ public class Customer {
     private String latitude;
     private String longitude;
     private boolean enabled;
-    private LocalDateTime createdAt;
-    private String creeatedBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Zone zone;

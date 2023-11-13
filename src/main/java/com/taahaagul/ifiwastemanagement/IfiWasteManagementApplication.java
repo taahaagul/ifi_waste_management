@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @EnableAsync
 @EnableTransactionManagement
+@EnableJpaAuditing(auditorAwareRef = "auditAwareImpl")
 public class IfiWasteManagementApplication {
 
 	public static void main(String[] args) {

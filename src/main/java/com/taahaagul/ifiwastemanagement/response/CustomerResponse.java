@@ -15,10 +15,12 @@ public class CustomerResponse {
     private String latitude;
     private String longitude;
     private boolean enabled;
-    private LocalDateTime createdAt;
-    private String createdBy;
     private String zoneName;
     private Long zoneId;
+    private LocalDateTime createdAt;
+    private String createdBy;
+    private LocalDateTime updatedAt;
+    private String updatedBy;
 
     public CustomerResponse(Customer entity) {
         this.id = entity.getId();
@@ -29,9 +31,11 @@ public class CustomerResponse {
         this.latitude = entity.getLatitude();
         this.longitude = entity.getLongitude();
         this.enabled = entity.isEnabled();
-        this.createdAt = entity.getCreatedAt();
-        this.createdBy = entity.getCreeatedBy();
         this.zoneName = entity.getZone().getZoneName();
         this.zoneId = entity.getZone().getId();
+        this.createdAt = entity.getCreatedAt();
+        this.createdBy = entity.getCreatedBy();
+        this.updatedAt = entity.getUpdatedAt();
+        this.updatedBy = entity.getUpdatedBy();
     }
 }
