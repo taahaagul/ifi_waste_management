@@ -10,4 +10,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     List<Customer> findByZone(Zone foundedZone);
 
+    List<Customer> findByBranchId(Long branchId);
+
+    List<Customer> findByDistrictId(Long districtId);
 }

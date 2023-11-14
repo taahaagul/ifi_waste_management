@@ -17,6 +17,10 @@ public class CustomerResponse {
     private boolean enabled;
     private String zoneName;
     private Long zoneId;
+    private String branchName;
+    private Long branchId;
+    private String districtName;
+    private Long districtId;
     private LocalDateTime createdAt;
     private String createdBy;
     private LocalDateTime updatedAt;
@@ -33,6 +37,10 @@ public class CustomerResponse {
         this.enabled = entity.isEnabled();
         this.zoneName = entity.getZone().getZoneName();
         this.zoneId = entity.getZone().getId();
+        this.branchName = entity.getBranchName();
+        this.branchId = entity.getBranchId();
+        this.districtName = entity.getDistrictName();
+        this.districtId = entity.getDistrictId();
         this.createdAt = entity.getCreatedAt();
         this.createdBy = entity.getCreatedBy();
         this.updatedAt = entity.getUpdatedAt();

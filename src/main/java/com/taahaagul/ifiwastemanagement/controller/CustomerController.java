@@ -41,4 +41,18 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(customerService.getZoneCustomers(zoneId));
     }
+
+    @GetMapping("/branchId/{branchId}")
+    public ResponseEntity<List<CustomerResponse>> getBranchCustomer(
+            @PathVariable Long branchId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(customerService.getBranchCustomers(branchId));
+    }
+
+    @GetMapping("/districtId/{districtId}")
+    public ResponseEntity<List<CustomerResponse>> getDistrictCustomer(
+            @PathVariable Long districtId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(customerService.getDistrictCustomers(districtId));
+    }
 }
