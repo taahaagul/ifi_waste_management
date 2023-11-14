@@ -28,8 +28,4 @@ public class Customer extends BaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Zone zone;
-    private Long branchId;
-    private String BranchName;
-    private Long districtId;
-    private String districtName;
 }

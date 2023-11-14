@@ -20,14 +20,6 @@ public class ZoneResponse {
     private String districtName;
     private String districtCode;
 
-    private Long cityId;
-    private String cityName;
-    private String cityCode;
-
-    private Long countryId;
-    private String countryName;
-    private String countryCode;
-
     private LocalDateTime createdAt;
     private String createdBy;
     private LocalDateTime updatedAt;
@@ -46,14 +38,6 @@ public class ZoneResponse {
         this.districtId = entity.getBranch().getDistrict().getId();
         this.districtName = entity.getBranch().getDistrict().getDistrictName();
         this.districtCode = entity.getBranch().getDistrict().getDistrictCode();
-
-        this.cityId = entity.getBranch().getDistrict().getCity().getId();
-        this.cityName = entity.getBranch().getDistrict().getCity().getCityName();
-        this.cityCode = entity.getBranch().getDistrict().getCity().getCityCode();
-
-        this.countryId = entity.getBranch().getDistrict().getCity().getCountry().getId();
-        this.countryName = entity.getBranch().getDistrict().getCity().getCountry().getCountryName();
-        this.countryCode = entity.getBranch().getDistrict().getCity().getCountry().getCounrtyCode();
 
         this.createdAt = entity.getCreatedAt();
         this.createdBy = entity.getCreatedBy();

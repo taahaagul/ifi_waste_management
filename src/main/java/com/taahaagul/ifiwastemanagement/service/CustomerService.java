@@ -35,10 +35,6 @@ public class CustomerService {
                 .longitude(customerRequest.getLongitude())
                 .enabled(customerRequest.getEnabled())
                 .zone(foundedZone)
-                .branchId(foundedZone.getBranch().getId())
-                .BranchName(foundedZone.getBranch().getBranchName())
-                .districtId(foundedZone.getBranch().getDistrict().getId())
-                .districtName(foundedZone.getBranch().getDistrict().getDistrictName())
                 .build();
 
         customerRepository.save(customer);
@@ -60,22 +56,6 @@ public class CustomerService {
 
         return zoneCustomers.stream()
                 .map(zoneCustomer -> new CustomerResponse(zoneCustomer))
-                .collect(Collectors.toList());
-    }
-
-    public List<CustomerResponse> getBranchCustomers(Long branchId) {
-        List<Customer> branchCustomers = customerRepository.findByBranchId(branchId);
-
-        return branchCustomers.stream()
-                .map(branchCustomer -> new CustomerResponse(branchCustomer))
-                .collect(Collectors.toList());
-    }
-
-    public List<CustomerResponse> getDistrictCustomers(Long districtId) {
-        List<Customer> districtCustomers = customerRepository.findByDistrictId(districtId);
-
-        return districtCustomers.stream()
-                .map(districtCustomer -> new CustomerResponse(districtCustomer))
                 .collect(Collectors.toList());
     }
 }
