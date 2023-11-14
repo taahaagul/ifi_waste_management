@@ -1,8 +1,6 @@
 package com.taahaagul.ifiwastemanagement.service;
 
-import com.taahaagul.ifiwastemanagement.entity.Branch;
 import com.taahaagul.ifiwastemanagement.entity.Customer;
-import com.taahaagul.ifiwastemanagement.entity.District;
 import com.taahaagul.ifiwastemanagement.entity.Zone;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.CustomerRepository;
@@ -10,10 +8,10 @@ import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
 import com.taahaagul.ifiwastemanagement.request.CustomerRequest;
 import com.taahaagul.ifiwastemanagement.response.CustomerResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,22 +38,24 @@ public class CustomerService {
         customerRepository.save(customer);
     }
 
-    public List<CustomerResponse> getAllCustomer() {
-        List<Customer> customers = customerRepository.findAll();
+    public Page<CustomerResponse> getAllCustomer(Pageable pageable) {
+        Page<Customer> customers = customerRepository.findAll(pageable);
 
-        return customers.stream()
-                .map(customer -> new CustomerResponse(customer))
-                .collect(Collectors.toList());
+        return customers.map(CustomerResponse::new);
     }
 
-    public List<CustomerResponse> getZoneCustomers(Long zoneId) {
+    public Page<CustomerResponse> getZoneCustomers(Long zoneId, Pageable pageable) {
         Zone foundedZone = zoneRepository.findById(zoneId)
                 .orElseThrow(() -> new ResourceNotFoundException("Zone", "zoneId", zoneId.toString()));
 
-        List<Customer> zoneCustomers = customerRepository.findByZone(foundedZone);
+        Page<Customer> zoneCustomers = customerRepository.findByZone(foundedZone, pageable);
 
-        return zoneCustomers.stream()
-                .map(zoneCustomer -> new CustomerResponse(zoneCustomer))
-                .collect(Collectors.toList());
+        return zoneCustomers.map(CustomerResponse::new);
+    }
+
+    public Page<CustomerResponse> getBranchCustomers(Long branchId, Pageable pageable) {
+        Page<Customer> branchCustomers = customerRepository.findByBranchId(branchId, pageable);
+
+        return branchCustomers.map(CustomerResponse::new);
     }
 }
