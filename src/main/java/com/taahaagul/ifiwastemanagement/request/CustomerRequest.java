@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class CustomerRequest {
 
-    @NotNull(message = "zoneId cannot be null")
     private Long zoneId;
 
     @NotEmpty(message = "customerName cannot be null or empty")

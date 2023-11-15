@@ -11,6 +11,8 @@ public class BranchResponse {
     private Long branchId;
     private String branchName;
     private String branchCode;
+    private String districtName;
+    private Long districtId;
     private LocalDateTime createdAt;
     private String createdBy;
     private LocalDateTime updatedAt;
@@ -24,5 +26,7 @@ public class BranchResponse {
         this.createdBy = entity.getCreatedBy();
         this.updatedAt = entity.getUpdatedAt();
         this.updatedBy = entity.getUpdatedBy();
+        this.districtId = entity.getDistrict().getId();
+        this.districtName = entity.getDistrict().getDistrictName();
     }
 }

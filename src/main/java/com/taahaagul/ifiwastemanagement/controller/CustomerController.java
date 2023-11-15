@@ -30,6 +30,16 @@ public class CustomerController {
                 .body("Customer created successfully");
     }
 
+    @PutMapping("/{customerId}/zone/{zoneId}")
+    public ResponseEntity<String> updateCustomerZone(
+            @PathVariable Long customerId,
+            @PathVariable Long zoneId) {
+
+        customerService.updateCustomerZone(customerId, zoneId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Customer zone updated successfully");
+    }
+
     @GetMapping
     public ResponseEntity<Page<CustomerResponse>> getAllCustomer(
             @RequestParam(defaultValue = "0") int page,

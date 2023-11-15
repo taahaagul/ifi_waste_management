@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/TG/zone")
@@ -41,5 +40,13 @@ public class ZoneController {
         zoneService.createZone(zoneRequest);
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Zone created successfully");
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteZone(
+            @PathVariable Long id) {
+        zoneService.deleteZone(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Zone deleted successfully");
     }
 }

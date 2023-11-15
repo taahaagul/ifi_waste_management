@@ -21,8 +21,10 @@ public class CustomerService {
     private final ZoneRepository zoneRepository;
 
     public void createCustomer(CustomerRequest customerRequest) {
-        Zone foundedZone = zoneRepository.findById(customerRequest.getZoneId())
-                .orElseThrow(() -> new ResourceNotFoundException("Zone", "zoneId", customerRequest.getZoneId().toString()));
+        Zone foundedZone = null;
+        if (customerRequest.getZoneId() != null)
+            foundedZone = zoneRepository.findById(customerRequest.getZoneId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Zone", "zoneId", customerRequest.getZoneId().toString()));
 
         Customer customer = Customer.builder()
                 .customerName(customerRequest.getCustomerName())
@@ -63,5 +65,16 @@ public class CustomerService {
         Page<Customer> districtCustomers = customerRepository.findAllCustomersByDistrictId(districtId, pageable);
 
         return districtCustomers.map(CustomerResponse::new);
+    }
+
+    public void updateCustomerZone(Long customerId, Long zoneId) {
+        Customer foundedCustomer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer", "customerId", customerId.toString()));
+
+        Zone foundedZone = zoneRepository.findById(zoneId)
+                .orElseThrow(() -> new ResourceNotFoundException("Zone", "zoneId", zoneId.toString()));
+
+        foundedCustomer.setZone(foundedZone);
+        customerRepository.save(foundedCustomer);
     }
 }

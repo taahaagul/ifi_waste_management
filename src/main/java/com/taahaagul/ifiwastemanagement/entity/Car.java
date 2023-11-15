@@ -13,21 +13,25 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Zone extends BaseEntity {
+public class Car extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
-    private String zoneName;
-    private String zoneCode;
+    private String targoNo;
+    private String ownerName;
+    private String ownerSurname;
+    private String ownerPhone;
+    private String taxFee;
+    private String vehicleClass;
+    private String amount;
+    private String fuelType;
+    private boolean status;
+
+    @OneToMany(mappedBy = "car", fetch = FetchType.LAZY)
+    private List<User> users;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Branch branch;
-
-    @OneToMany(mappedBy = "zone", fetch = FetchType.LAZY)
-    private List<Customer> customers;
-
-    @OneToMany(mappedBy = "zone", fetch = FetchType.LAZY)
-    private List<Car> cars;
+    private Zone zone;
 }

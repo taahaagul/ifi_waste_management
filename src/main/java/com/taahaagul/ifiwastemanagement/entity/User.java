@@ -37,6 +37,9 @@ public class User extends BaseEntity implements UserDetails {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private VerificationToken verificationToken;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Car car;
+
     public String getUserName() {
         return userName;
     }
