@@ -6,7 +6,10 @@ import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.CarRepository;
 import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
 import com.taahaagul.ifiwastemanagement.request.CarRequest;
+import com.taahaagul.ifiwastemanagement.response.CarResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,5 +50,10 @@ public class CarService {
 
         foundedCar.setZone(foundedZone);
         carRepository.save(foundedCar);
+    }
+
+    public Page<CarResponse> getAllCar(Pageable pageable) {
+        return carRepository.findAll(pageable)
+                .map(CarResponse::new);
     }
 }

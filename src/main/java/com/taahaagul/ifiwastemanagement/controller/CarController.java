@@ -1,9 +1,13 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.request.CarRequest;
+import com.taahaagul.ifiwastemanagement.response.CarResponse;
 import com.taahaagul.ifiwastemanagement.service.CarService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -34,4 +38,17 @@ public class CarController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Car zone updated successfully");
     }
+
+    @GetMapping
+    public ResponseEntity<Page<CarResponse>> getAllCar(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CarResponse> carPage = carService.getAllCar(pageable);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(carPage);
+    }
+
 }

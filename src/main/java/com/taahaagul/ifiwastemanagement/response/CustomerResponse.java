@@ -35,15 +35,25 @@ public class CustomerResponse {
         this.latitude = entity.getLatitude();
         this.longitude = entity.getLongitude();
         this.enabled = entity.isEnabled();
-        this.zoneName = entity.getZone().getZoneName();
-        this.zoneId = entity.getZone().getId();
-        this.branchName = entity.getZone().getBranch().getBranchName();
-        this.branchId = entity.getZone().getBranch().getId();
-        this.districtName = entity.getZone().getBranch().getDistrict().getDistrictName();
-        this.districtId = entity.getZone().getBranch().getDistrict().getId();
         this.createdAt = entity.getCreatedAt();
         this.createdBy = entity.getCreatedBy();
         this.updatedAt = entity.getUpdatedAt();
         this.updatedBy = entity.getUpdatedBy();
+
+        if (entity.getZone() != null) {
+            this.zoneName = entity.getZone().getZoneName();
+            this.zoneId = entity.getZone().getId();
+            this.branchName = entity.getZone().getBranch().getBranchName();
+            this.branchId = entity.getZone().getBranch().getId();
+            this.districtName = entity.getZone().getBranch().getDistrict().getDistrictName();
+            this.districtId = entity.getZone().getBranch().getDistrict().getId();
+        } else {
+            this.zoneName = null;
+            this.zoneId = null;
+            this.branchName = null;
+            this.branchId = null;
+            this.districtName = null;
+            this.districtId = null;
+        }
     }
 }
