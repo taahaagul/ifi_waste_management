@@ -8,6 +8,8 @@ import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
 import com.taahaagul.ifiwastemanagement.request.ZoneRequest;
 import com.taahaagul.ifiwastemanagement.response.ZoneResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,11 +35,9 @@ public class ZoneService {
         zoneRepository.save(zone);
     }
 
-    public List<ZoneResponse> getAllZone() {
-        List<Zone> zones = zoneRepository.findAll();
+    public Page<ZoneResponse> getAllZone(Pageable pageable) {
+        Page<Zone> zones = zoneRepository.findAll(pageable);
 
-        return zones.stream()
-                .map(zone -> new ZoneResponse(zone))
-                .collect(Collectors.toList());
+        return zones.map(ZoneResponse::new);
     }
 }

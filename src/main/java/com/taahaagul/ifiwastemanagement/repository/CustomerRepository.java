@@ -13,6 +13,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     Page<Customer> findByZone(Zone foundedZone, Pageable pageable);
 
-    @Query("SELECT c FROM Customer c WHERE c.zone.branch.id = :branchId")
+    @Query("SELECT c FROM Customer c JOIN c.zone z JOIN z.branch b WHERE b.id = :branchId")
     Page<Customer> findByBranchId(@Param("branchId") Long branchId, Pageable pageable);
+
+    @Query("SELECT c FROM Customer c JOIN c.zone z JOIN z.branch b JOIN b.district d WHERE d.id = :districtId")
+    Page<Customer> findAllCustomersByDistrictId(@Param("districtId") Long districtId, Pageable pageable);
 }

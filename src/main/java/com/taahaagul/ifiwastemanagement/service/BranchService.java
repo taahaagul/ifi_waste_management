@@ -8,6 +8,8 @@ import com.taahaagul.ifiwastemanagement.repository.DistrictRepository;
 import com.taahaagul.ifiwastemanagement.request.BranchRequest;
 import com.taahaagul.ifiwastemanagement.response.BranchResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,11 +35,9 @@ public class BranchService {
         branchRepository.save(branch);
     }
 
-    public List<BranchResponse> getAllBranch() {
-        List<Branch> branches = branchRepository.findAll();
+    public Page<BranchResponse> getAllBranch(Pageable pageable) {
+        Page<Branch> branches = branchRepository.findAll(pageable);
 
-        return branches.stream()
-                .map(branch -> new BranchResponse(branch))
-                .collect(Collectors.toList());
+        return branches.map(BranchResponse::new);
     }
 }

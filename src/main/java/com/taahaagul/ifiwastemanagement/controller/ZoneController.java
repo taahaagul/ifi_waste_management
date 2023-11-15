@@ -5,6 +5,9 @@ import com.taahaagul.ifiwastemanagement.response.ZoneResponse;
 import com.taahaagul.ifiwastemanagement.service.ZoneService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,9 +24,15 @@ public class ZoneController {
     private final ZoneService zoneService;
 
     @GetMapping
-    public ResponseEntity<List<ZoneResponse>> getAllZone() {
+    public ResponseEntity<Page<ZoneResponse>> getAllZone(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ZoneResponse> zonePage = zoneService.getAllZone(pageable);
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(zoneService.getAllZone());
+                .body(zonePage);
     }
 
     @PostMapping("/create")

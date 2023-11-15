@@ -13,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/TG/customer")
 @RequiredArgsConstructor
@@ -68,4 +66,17 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(customerPage);
     }
+
+    @GetMapping("/byDistrict")
+    public ResponseEntity<Page<CustomerResponse>> getCustomerByDistrict(
+            @RequestParam Long districtId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CustomerResponse> customerPage = customerService.getDistrictCustomers(districtId, pageable);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(customerPage);
+    }
+
 }

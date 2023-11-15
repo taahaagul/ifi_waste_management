@@ -58,4 +58,10 @@ public class CustomerService {
 
         return branchCustomers.map(CustomerResponse::new);
     }
+
+    public Page<CustomerResponse> getDistrictCustomers(Long districtId, Pageable pageable) {
+        Page<Customer> districtCustomers = customerRepository.findAllCustomersByDistrictId(districtId, pageable);
+
+        return districtCustomers.map(CustomerResponse::new);
+    }
 }
