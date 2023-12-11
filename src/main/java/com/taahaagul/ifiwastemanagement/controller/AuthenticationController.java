@@ -2,6 +2,7 @@ package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.request.ForgetPaswRequest;
 import com.taahaagul.ifiwastemanagement.request.LoginRequest;
+import com.taahaagul.ifiwastemanagement.request.RegisterRequest;
 import com.taahaagul.ifiwastemanagement.response.AuthenticationResponse;
 import com.taahaagul.ifiwastemanagement.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +39,15 @@ public class AuthenticationController {
             HttpServletResponse response
     ) throws IOException {
         service.refreshToken(request, response);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> register(
+            @Valid @RequestBody RegisterRequest request
+    ) {
+        service.register(request);
+        return ResponseEntity.status(OK)
+                .body("User Registiration Successfully");
     }
 
     @PostMapping("/forgetMyPassword/{email}")
