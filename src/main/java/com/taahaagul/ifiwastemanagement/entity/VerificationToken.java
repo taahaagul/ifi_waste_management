@@ -7,9 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 import java.util.Date;
 
 @Entity
-@Getter
-@Setter
-@ToString
+@Getter @Setter @ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,6 +20,7 @@ public class VerificationToken {
     private String token;
     private Date expirationTime;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 }

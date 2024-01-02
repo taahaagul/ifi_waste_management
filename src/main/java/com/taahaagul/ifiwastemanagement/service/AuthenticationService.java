@@ -72,14 +72,8 @@ public class AuthenticationService {
     }
 
     public String generateVerificationToken(User user) {
-        VerificationToken existingToken = verificationTokenRepository.findByUser(user);
-
-        if(existingToken != null) {
-            verificationTokenRepository.delete(existingToken);
-            log.info("Deleted existing verification token");
-        } else {
-            log.info("There is no any verification token");
-        }
+        if(user.isEnabled())
+            revokeAllVerificationToken(user);
 
         String token = UUID.randomUUID().toString();
 
@@ -132,6 +126,13 @@ public class AuthenticationService {
         if (validUserTokens.isEmpty())
             return;
         tokenRepository.deleteAll(validUserTokens);
+    }
+
+    private void revokeAllVerificationToken(User user) {
+        var verificationTokens = verificationTokenRepository.findByUser(user);
+        if (verificationTokens.isEmpty())
+            return;
+        verificationTokenRepository.deleteAll(verificationTokens);
     }
 
     private void saveUserToken(User user, String jwtToken) {

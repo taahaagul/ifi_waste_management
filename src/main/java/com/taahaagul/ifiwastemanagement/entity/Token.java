@@ -5,9 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Getter
-@Setter
-@ToString
+@Getter @Setter @ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
