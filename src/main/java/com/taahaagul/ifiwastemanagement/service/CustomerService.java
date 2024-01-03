@@ -6,6 +6,7 @@ import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.CustomerRepository;
 import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
 import com.taahaagul.ifiwastemanagement.request.CustomerRequest;
+import com.taahaagul.ifiwastemanagement.request.CustomerUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.CustomerResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,6 +39,28 @@ public class CustomerService {
                 .build();
 
         customerRepository.save(customer);
+    }
+
+    public void updateCustomer(Long customerId, CustomerUpdateRequest customerUpdateRequest) {
+        Customer foundedCustomer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer", "customerId", customerId.toString()));
+
+        foundedCustomer.setCustomerName(customerUpdateRequest.getCustomerName());
+        foundedCustomer.setHouseNumber(customerUpdateRequest.getHouseNumber());
+        foundedCustomer.setMobileNumber(customerUpdateRequest.getMobileNumber());
+        foundedCustomer.setSpecialRate(customerUpdateRequest.getSpecialRate());
+        foundedCustomer.setLatitude(customerUpdateRequest.getLatitude());
+        foundedCustomer.setLongitude(customerUpdateRequest.getLongitude());
+        foundedCustomer.setEnabled(customerUpdateRequest.getEnabled());
+
+        customerRepository.save(foundedCustomer);
+    }
+
+    public void deleteCustomer(Long customerId) {
+        Customer foundedCustomer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer", "customerId", customerId.toString()));
+
+        customerRepository.delete(foundedCustomer);
     }
 
     public Page<CustomerResponse> getAllCustomer(Pageable pageable) {
@@ -77,4 +100,5 @@ public class CustomerService {
         foundedCustomer.setZone(foundedZone);
         customerRepository.save(foundedCustomer);
     }
+
 }

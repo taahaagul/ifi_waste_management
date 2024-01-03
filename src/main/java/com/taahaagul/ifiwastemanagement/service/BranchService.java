@@ -40,4 +40,11 @@ public class BranchService {
 
         return branches.map(BranchResponse::new);
     }
+
+    public void deleteBranch(Long id) {
+        Branch foundedBranch = branchRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Branch", "id", id.toString()));
+
+        branchRepository.delete(foundedBranch);
+    }
 }

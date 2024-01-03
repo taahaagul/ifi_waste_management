@@ -9,6 +9,7 @@ import com.taahaagul.ifiwastemanagement.repository.CustomerRepository;
 import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
 import com.taahaagul.ifiwastemanagement.request.ZoneRequest;
 import com.taahaagul.ifiwastemanagement.response.ZoneResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,6 +46,7 @@ public class ZoneService {
         return zones.map(ZoneResponse::new);
     }
 
+    @Transactional
     public void deleteZone(Long id) {
         Zone foundedZone = zoneRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Zone", "id", id.toString()));

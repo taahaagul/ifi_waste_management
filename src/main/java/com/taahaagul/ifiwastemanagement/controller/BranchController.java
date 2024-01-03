@@ -42,4 +42,12 @@ public class BranchController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Branch created successfully");
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteBranch(
+            @PathVariable Long id) {
+        branchService.deleteBranch(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Branch deleted successfully");
+    }
 }

@@ -1,6 +1,7 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.request.CustomerRequest;
+import com.taahaagul.ifiwastemanagement.request.CustomerUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.CustomerResponse;
 import com.taahaagul.ifiwastemanagement.service.CustomerService;
 import jakarta.validation.Valid;
@@ -29,6 +30,26 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Customer created successfully");
     }
+
+    @PutMapping("/{customerId}")
+    public ResponseEntity<String> updateCustomer(
+            @PathVariable Long customerId,
+            @Valid @RequestBody CustomerUpdateRequest customerUpdateRequest) {
+
+        customerService.updateCustomer(customerId, customerUpdateRequest);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Customer updated successfully");
+    }
+
+    @DeleteMapping("/{customerId}")
+    public ResponseEntity<String> deleteCustomer(
+            @PathVariable Long customerId) {
+
+        customerService.deleteCustomer(customerId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Customer deleted successfully");
+    }
+
 
     @PutMapping("/{customerId}/zone/{zoneId}")
     public ResponseEntity<String> updateCustomerZone(
