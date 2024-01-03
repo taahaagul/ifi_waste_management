@@ -6,6 +6,7 @@ import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.CarRepository;
 import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
 import com.taahaagul.ifiwastemanagement.request.CarRequest;
+import com.taahaagul.ifiwastemanagement.request.CarUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.CarResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -41,6 +42,23 @@ public class CarService {
         carRepository.save(car);
     }
 
+    public void updateCar(Long carId, CarUpdateRequest carUpdateRequest) {
+        Car foundedCar = carRepository.findById(carId)
+                .orElseThrow(() -> new ResourceNotFoundException("Car", "carId", carId.toString()));
+
+        foundedCar.setTargoNo(carUpdateRequest.getTargoNo());
+        foundedCar.setOwnerName(carUpdateRequest.getOwnerName());
+        foundedCar.setOwnerSurname(carUpdateRequest.getOwnerSurname());
+        foundedCar.setOwnerPhone(carUpdateRequest.getOwnerPhone());
+        foundedCar.setTaxFee(carUpdateRequest.getTaxFee());
+        foundedCar.setVehicleClass(carUpdateRequest.getVehicleClass());
+        foundedCar.setAmount(carUpdateRequest.getAmount());
+        foundedCar.setFuelType(carUpdateRequest.getFuelType());
+        foundedCar.setStatus(carUpdateRequest.isStatus());
+
+        carRepository.save(foundedCar);
+    }
+
     public void updateCarZone(Long carId, Long zoneId) {
         Car foundedCar = carRepository.findById(carId)
                 .orElseThrow(() -> new ResourceNotFoundException("Car", "carId", carId.toString()));
@@ -55,5 +73,12 @@ public class CarService {
     public Page<CarResponse> getAllCar(Pageable pageable) {
         return carRepository.findAll(pageable)
                 .map(CarResponse::new);
+    }
+
+    public void deleteCar(Long carId) {
+        Car foundedCar = carRepository.findById(carId)
+                .orElseThrow(() -> new ResourceNotFoundException("Car", "carId", carId.toString()));
+
+        carRepository.delete(foundedCar);
     }
 }

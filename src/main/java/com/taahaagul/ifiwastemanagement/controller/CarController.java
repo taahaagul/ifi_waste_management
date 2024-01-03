@@ -1,6 +1,7 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.request.CarRequest;
+import com.taahaagul.ifiwastemanagement.request.CarUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.CarResponse;
 import com.taahaagul.ifiwastemanagement.service.CarService;
 import jakarta.validation.Valid;
@@ -29,6 +30,16 @@ public class CarController {
                 .body("Car created successfully");
     }
 
+    @PutMapping("/{carId}")
+    public ResponseEntity<String> updateCar(
+            @PathVariable Long carId,
+            @Valid @RequestBody CarUpdateRequest carUpdateRequest) {
+
+        carService.updateCar(carId, carUpdateRequest);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Car updated successfully");
+    }
+
     @PutMapping("/{carId}/zone/{zoneId}")
     public ResponseEntity<String> updateCarZone(
             @PathVariable Long carId,
@@ -51,4 +62,12 @@ public class CarController {
                 .body(carPage);
     }
 
+    @DeleteMapping("/{carId}")
+    public ResponseEntity<String> deleteCar(
+            @PathVariable Long carId) {
+
+        carService.deleteCar(carId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Car deleted successfully");
+    }
 }
