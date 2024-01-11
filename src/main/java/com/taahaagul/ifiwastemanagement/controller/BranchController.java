@@ -1,6 +1,7 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.request.BranchRequest;
+import com.taahaagul.ifiwastemanagement.request.BranchUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.BranchResponse;
 import com.taahaagul.ifiwastemanagement.service.BranchService;
 import jakarta.validation.Valid;
@@ -33,6 +34,14 @@ public class BranchController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(branchPage);
+    }
+
+    @PutMapping("/{branchId}")
+    public ResponseEntity<String> updateBranch(
+            @Valid @RequestBody BranchUpdateRequest branchUpdateRequest) {
+        branchService.updateBranch(branchUpdateRequest);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Branch updated successfully");
     }
 
     @PostMapping("/create")

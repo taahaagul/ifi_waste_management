@@ -6,6 +6,7 @@ import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.BranchRepository;
 import com.taahaagul.ifiwastemanagement.repository.DistrictRepository;
 import com.taahaagul.ifiwastemanagement.request.BranchRequest;
+import com.taahaagul.ifiwastemanagement.request.BranchUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.BranchResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -46,5 +47,9 @@ public class BranchService {
                 .orElseThrow(() -> new ResourceNotFoundException("Branch", "id", id.toString()));
 
         branchRepository.delete(foundedBranch);
+    }
+
+    public void updateBranch(BranchUpdateRequest branchUpdateRequest) {
+        
     }
 }
