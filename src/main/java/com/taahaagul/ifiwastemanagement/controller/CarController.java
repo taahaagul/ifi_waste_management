@@ -3,6 +3,7 @@ package com.taahaagul.ifiwastemanagement.controller;
 import com.taahaagul.ifiwastemanagement.request.CarRequest;
 import com.taahaagul.ifiwastemanagement.request.CarUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.CarResponse;
+import com.taahaagul.ifiwastemanagement.response.UserResponse;
 import com.taahaagul.ifiwastemanagement.service.CarService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/TG/car")
@@ -69,5 +72,12 @@ public class CarController {
         carService.deleteCar(carId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Car deleted successfully");
+    }
+
+    @GetMapping("/carUsers/{carId}")
+    public ResponseEntity<List<UserResponse>> getCarUsers(
+            @PathVariable Long carId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(carService.getCarUsers(carId));
     }
 }

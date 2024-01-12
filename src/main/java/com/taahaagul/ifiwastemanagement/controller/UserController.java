@@ -107,4 +107,15 @@ public class UserController {
         return ResponseEntity.status(OK)
                 .body("User enabled status changed");
     }
+
+
+    @PutMapping("/{userId}/car/{carId}")
+    public ResponseEntity<String> assignUserCar(
+            @PathVariable Long userId,
+            @PathVariable Long carId) {
+
+        userService.assignUserCar(userId, carId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("User car assigned successfully");
+    }
 }

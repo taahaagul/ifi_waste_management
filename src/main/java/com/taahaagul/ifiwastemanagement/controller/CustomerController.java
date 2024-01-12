@@ -52,11 +52,11 @@ public class CustomerController {
 
 
     @PutMapping("/{customerId}/zone/{zoneId}")
-    public ResponseEntity<String> updateCustomerZone(
+    public ResponseEntity<String> assignCustomerZone(
             @PathVariable Long customerId,
             @PathVariable Long zoneId) {
 
-        customerService.updateCustomerZone(customerId, zoneId);
+        customerService.assignCustomerZone(customerId, zoneId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Customer zone updated successfully");
     }

@@ -8,10 +8,13 @@ import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
 import com.taahaagul.ifiwastemanagement.request.CarRequest;
 import com.taahaagul.ifiwastemanagement.request.CarUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.CarResponse;
+import com.taahaagul.ifiwastemanagement.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -80,5 +83,15 @@ public class CarService {
                 .orElseThrow(() -> new ResourceNotFoundException("Car", "carId", carId.toString()));
 
         carRepository.delete(foundedCar);
+    }
+
+    public List<UserResponse> getCarUsers(Long carId) {
+        Car foundedCar = carRepository.findById(carId)
+                .orElseThrow(() -> new ResourceNotFoundException("Car", "carId", carId.toString()));
+
+        return foundedCar.getUsers()
+                .stream()
+                .map(UserResponse::new)
+                .toList();
     }
 }

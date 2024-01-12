@@ -1,10 +1,12 @@
 package com.taahaagul.ifiwastemanagement.service;
 
+import com.taahaagul.ifiwastemanagement.entity.Car;
 import com.taahaagul.ifiwastemanagement.entity.Role;
 import com.taahaagul.ifiwastemanagement.entity.User;
 import com.taahaagul.ifiwastemanagement.exception.IncorrectValueException;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.exception.RoleUnmathcedException;
+import com.taahaagul.ifiwastemanagement.repository.CarRepository;
 import com.taahaagul.ifiwastemanagement.repository.UserRepository;
 import com.taahaagul.ifiwastemanagement.request.UserChangePaswRequest;
 import com.taahaagul.ifiwastemanagement.request.UserUpdateRequest;
@@ -25,6 +27,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final AuthenticationService authenticationService;
     private final PasswordEncoder passwordEncoder;
+    private final CarRepository carRepository;
 
     public UserResponse getCurrentUser() {
         return new UserResponse(authenticationService.getCurrentUser());
@@ -119,6 +122,17 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId.toString()));;
 
         return new UserResponse(foundUser);
+    }
+
+    public void assignUserCar(Long userId, Long carId) {
+        User foundUser = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId.toString()));
+
+        Car foundCar = carRepository.findById(carId)
+                .orElseThrow(() -> new ResourceNotFoundException("Car", "carId", carId.toString()));
+
+        foundUser.setCar(foundCar);
+        userRepository.save(foundUser);
     }
 }
 

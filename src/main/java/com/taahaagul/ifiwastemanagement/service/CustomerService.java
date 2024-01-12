@@ -90,7 +90,7 @@ public class CustomerService {
         return districtCustomers.map(CustomerResponse::new);
     }
 
-    public void updateCustomerZone(Long customerId, Long zoneId) {
+    public void assignCustomerZone(Long customerId, Long zoneId) {
         Customer foundedCustomer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer", "customerId", customerId.toString()));
 
