@@ -33,8 +33,6 @@ public class User extends BaseEntity implements UserDetails {
     private boolean enabled;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Token> tokens;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VerificationToken> verificationToken;
 
     @ManyToOne(fetch = FetchType.LAZY)
