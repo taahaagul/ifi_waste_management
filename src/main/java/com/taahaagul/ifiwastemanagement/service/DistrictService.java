@@ -40,4 +40,11 @@ public class DistrictService {
                 .map(district -> new DistrictResponse(district))
                 .collect(Collectors.toList());
     }
+
+    public void deleteDistrict(Long id) {
+        District foundedDistrict = districtRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("District", "id", id.toString()));
+
+        districtRepository.delete(foundedDistrict);
+    }
 }

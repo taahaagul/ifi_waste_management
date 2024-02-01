@@ -40,4 +40,11 @@ public class CityService {
                 .map(city -> new CityResponse(city))
                 .collect(Collectors.toList());
     }
+
+    public void deleteCity(Long id) {
+        City foundedCity = cityRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("City", "id", id.toString()));
+
+        cityRepository.delete(foundedCity);
+    }
 }

@@ -33,4 +33,13 @@ public class DistrictController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body("District created");
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteDistrict(
+            @PathVariable Long id) {
+
+        districtService.deleteDistrict(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("District deleted");
+    }
 }

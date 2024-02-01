@@ -33,4 +33,11 @@ public class CountryController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(countryService.createCountry(countryRequest));
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteCountry(@PathVariable Long id) {
+        countryService.deleteCountry(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Country deleted successfully");
+    }
 }

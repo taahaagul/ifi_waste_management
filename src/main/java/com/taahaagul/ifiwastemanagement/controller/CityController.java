@@ -33,5 +33,12 @@ public class CityController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body("City added");
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteCity(@PathVariable("id") Long id) {
+        cityService.deleteCity(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("City deleted");
+    }
     
 }

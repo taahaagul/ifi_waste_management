@@ -1,6 +1,7 @@
 package com.taahaagul.ifiwastemanagement.service;
 
 import com.taahaagul.ifiwastemanagement.entity.Country;
+import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.CountryRepository;
 import com.taahaagul.ifiwastemanagement.request.CountryRequest;
 import com.taahaagul.ifiwastemanagement.response.CountryResponse;
@@ -33,5 +34,12 @@ public class CountryService {
         return countries.stream()
                 .map(country -> new CountryResponse(country))
                 .collect(Collectors.toList());
+    }
+
+    public void deleteCountry(Long id) {
+        Country foundedCountry = countryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Country", "id", id.toString()));
+
+        countryRepository.delete(foundedCountry);
     }
 }

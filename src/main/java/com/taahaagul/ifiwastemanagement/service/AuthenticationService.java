@@ -69,6 +69,23 @@ public class AuthenticationService {
                 "Password : " + request.getPassword()));
     }
 
+    public AuthenticationResponse authenticate(LoginRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+        var user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow();
+        var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
+        return AuthenticationResponse.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
     public String generateVerificationToken(User user) {
         if(user.isEnabled())
             revokeAllVerificationToken(user);
@@ -89,24 +106,6 @@ public class AuthenticationService {
         verificationTokenRepository.save(verificationToken);
         return token;
     }
-
-    public AuthenticationResponse authenticate(LoginRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
-        var user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow();
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        return AuthenticationResponse.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .build();
-    }
-
 
     private void revokeAllVerificationToken(User user) {
         var verificationTokens = verificationTokenRepository.findByUser(user);
