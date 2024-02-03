@@ -34,13 +34,12 @@ public class CarController {
     }
 
     @PutMapping("/{carId}")
-    public ResponseEntity<String> updateCar(
+    public ResponseEntity<CarResponse> updateCar(
             @PathVariable Long carId,
             @Valid @RequestBody CarUpdateRequest carUpdateRequest) {
 
-        carService.updateCar(carId, carUpdateRequest);
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Car updated successfully");
+                .body(carService.updateCar(carId, carUpdateRequest));
     }
 
     @PutMapping("/{carId}/zone/{zoneId}")
