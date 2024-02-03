@@ -21,7 +21,7 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final ZoneRepository zoneRepository;
 
-    public void createCustomer(CustomerRequest customerRequest) {
+    public CustomerResponse createCustomer(CustomerRequest customerRequest) {
         Zone foundedZone = null;
         if (customerRequest.getZoneId() != null)
             foundedZone = zoneRepository.findById(customerRequest.getZoneId())
@@ -38,7 +38,7 @@ public class CustomerService {
                 .zone(foundedZone)
                 .build();
 
-        customerRepository.save(customer);
+        return new CustomerResponse(customerRepository.save(customer));
     }
 
     public void updateCustomer(Long customerId, CustomerUpdateRequest customerUpdateRequest) {

@@ -26,7 +26,7 @@ public class CarService {
     private final CarRepository carRepository;
     private final UserRepository userRepository;
 
-    public void createCar(CarRequest carRequest) {
+    public CarResponse createCar(CarRequest carRequest) {
         Zone foundedZone = null;
         if (carRequest.getZoneId() != null) {
             foundedZone = zoneRepository.findById(carRequest.getZoneId())
@@ -46,7 +46,7 @@ public class CarService {
                 .status(carRequest.isStatus())
                 .build();
 
-        carRepository.save(car);
+        return new CarResponse(carRepository.save(car));
     }
 
     public CarResponse updateCar(Long carId, CarUpdateRequest carUpdateRequest) {

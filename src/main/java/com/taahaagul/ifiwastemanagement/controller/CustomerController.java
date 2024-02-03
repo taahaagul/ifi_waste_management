@@ -23,12 +23,11 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createCustomer(
+    public ResponseEntity<CustomerResponse> createCustomer(
             @Valid @RequestBody CustomerRequest customerRequest) {
 
-        customerService.createCustomer(customerRequest);
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Customer created successfully");
+                .body(customerService.createCustomer(customerRequest));
     }
 
     @PutMapping("/{customerId}")

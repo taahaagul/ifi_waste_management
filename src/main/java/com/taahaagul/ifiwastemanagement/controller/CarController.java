@@ -26,11 +26,11 @@ public class CarController {
     private final CarService carService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createCar(
+    public ResponseEntity<CarResponse> createCar(
             @Valid @RequestBody CarRequest carRequest) {
-        carService.createCar(carRequest);
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Car created successfully");
+                .body(carService.createCar(carRequest));
     }
 
     @PutMapping("/{carId}")
