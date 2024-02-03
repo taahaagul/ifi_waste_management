@@ -27,8 +27,14 @@ public class CarService {
     private final UserRepository userRepository;
 
     public void createCar(CarRequest carRequest) {
+        Zone foundedZone = null;
+        if (carRequest.getZoneId() != null) {
+            foundedZone = zoneRepository.findById(carRequest.getZoneId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Zone", "zoneId", carRequest.getZoneId().toString()));
+        }
 
         Car car = Car.builder()
+                .zone(foundedZone)
                 .targoNo(carRequest.getTargoNo())
                 .ownerName(carRequest.getOwnerName())
                 .ownerSurname(carRequest.getOwnerSurname())

@@ -7,6 +7,8 @@ import lombok.Data;
 @Data
 public class CarRequest {
 
+    private Long zoneId;
+
     @NotEmpty(message = "customerName cannot be null or empty")
     private String targoNo;
 
