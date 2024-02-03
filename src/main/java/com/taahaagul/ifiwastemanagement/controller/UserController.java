@@ -58,12 +58,13 @@ public class UserController {
                 .body("User Registiration Successfully");
     }
 
-    @PutMapping
+    @PutMapping("/{userId}")
     @PreAuthorize("hasAuthority('user:update')")
     public ResponseEntity<UserResponse> updateUser(
+            @PathVariable Long userId,
             @Valid @RequestBody UserUpdateRequest request) {
         return ResponseEntity.status(OK)
-                .body(userService.updateUser(request));
+                .body(userService.updateUser(userId, request));
     }
 
     @DeleteMapping("/{userId}")

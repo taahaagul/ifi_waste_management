@@ -1,7 +1,6 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.request.BranchRequest;
-import com.taahaagul.ifiwastemanagement.request.BranchUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.BranchResponse;
 import com.taahaagul.ifiwastemanagement.service.BranchService;
 import jakarta.validation.Valid;
@@ -13,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/TG/branch")
@@ -34,14 +31,6 @@ public class BranchController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(branchPage);
-    }
-
-    @PutMapping("/{branchId}")
-    public ResponseEntity<String> updateBranch(
-            @Valid @RequestBody BranchUpdateRequest branchUpdateRequest) {
-        branchService.updateBranch(branchUpdateRequest);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body("Branch updated successfully");
     }
 
     @PostMapping("/create")

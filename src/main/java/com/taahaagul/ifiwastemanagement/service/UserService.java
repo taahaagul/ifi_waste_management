@@ -51,9 +51,9 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse updateUser(UserUpdateRequest request) {
-        User foundUser = userRepository.findById(request.getId())
-                .orElseThrow(()-> new ResourceNotFoundException("User", "userId", request.getId().toString()));
+    public UserResponse updateUser(Long userId, UserUpdateRequest request) {
+        User foundUser = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId.toString()));
 
         if(foundUser.getRole().equals(Role.SUPER_ADMIN)) {
             throw new RoleUnmathcedException(foundUser.getRole(), "Untouchable!");
