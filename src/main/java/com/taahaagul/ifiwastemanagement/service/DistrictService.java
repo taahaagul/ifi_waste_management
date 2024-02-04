@@ -2,10 +2,12 @@ package com.taahaagul.ifiwastemanagement.service;
 
 import com.taahaagul.ifiwastemanagement.entity.City;
 import com.taahaagul.ifiwastemanagement.entity.District;
+import com.taahaagul.ifiwastemanagement.exception.IllegalOperationException;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.CityRepository;
 import com.taahaagul.ifiwastemanagement.repository.DistrictRepository;
 import com.taahaagul.ifiwastemanagement.request.DistrictRequest;
+import com.taahaagul.ifiwastemanagement.request.DistrictUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.DistrictResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +22,7 @@ public class DistrictService {
     private final DistrictRepository districtRepository;
     private final CityRepository cityRepository;
 
-    public void createDistrict(DistrictRequest districtRequest) {
+    public DistrictResponse createDistrict(DistrictRequest districtRequest) {
         City foundedCity = cityRepository.findById(districtRequest.getCityId())
                 .orElseThrow(() -> new ResourceNotFoundException("District", "cityId", districtRequest.getCityId().toString()));
 
@@ -30,7 +32,7 @@ public class DistrictService {
                 .city(foundedCity)
                 .build();
 
-        districtRepository.save(district);
+        return new DistrictResponse(districtRepository.save(district));
     }
 
     public List<DistrictResponse> getAllDistrict() {
@@ -45,6 +47,20 @@ public class DistrictService {
         District foundedDistrict = districtRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("District", "id", id.toString()));
 
+        if (!foundedDistrict.getBranches().isEmpty()) {
+            throw new IllegalOperationException("Cannot delete District as it is associated with one or more Branch entities");
+        }
+
         districtRepository.delete(foundedDistrict);
+    }
+
+    public DistrictResponse updateDistrict(Long id, DistrictUpdateRequest districtUpdateRequest) {
+        District foundedDistrict = districtRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("District", "id", id.toString()));
+
+        foundedDistrict.setDistrictName(districtUpdateRequest.getDistrictName());
+        foundedDistrict.setDistrictCode(districtUpdateRequest.getDistrictCode());
+
+        return new DistrictResponse(districtRepository.save(foundedDistrict));
     }
 }

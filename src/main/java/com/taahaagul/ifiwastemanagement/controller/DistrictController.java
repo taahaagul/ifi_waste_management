@@ -1,6 +1,7 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.request.DistrictRequest;
+import com.taahaagul.ifiwastemanagement.request.DistrictUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.DistrictResponse;
 import com.taahaagul.ifiwastemanagement.service.DistrictService;
 import jakarta.validation.Valid;
@@ -27,14 +28,21 @@ public class DistrictController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createDistrict(
+    public ResponseEntity<DistrictResponse> createDistrict(
             @Valid @RequestBody DistrictRequest districtRequest) {
-        districtService.createDistrict(districtRequest);
         return ResponseEntity.status(HttpStatus.OK)
-                .body("District created");
+                .body(districtService.createDistrict(districtRequest));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PutMapping("/{id}")
+    public ResponseEntity<DistrictResponse> updateDistrict(
+            @PathVariable Long id,
+            @Valid @RequestBody DistrictUpdateRequest districtUpdateRequest) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(districtService.updateDistrict(id, districtUpdateRequest));
+    }
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteDistrict(
             @PathVariable Long id) {
 
