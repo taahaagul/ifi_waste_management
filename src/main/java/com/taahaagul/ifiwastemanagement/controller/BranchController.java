@@ -1,6 +1,7 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.request.BranchRequest;
+import com.taahaagul.ifiwastemanagement.request.BranchUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.BranchResponse;
 import com.taahaagul.ifiwastemanagement.service.BranchService;
 import jakarta.validation.Valid;
@@ -34,14 +35,21 @@ public class BranchController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createBranch(
+    public ResponseEntity<BranchResponse> createBranch(
             @Valid @RequestBody BranchRequest branchRequest) {
-        branchService.createBranch(branchRequest);
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Branch created successfully");
+                .body(branchService.createBranch(branchRequest));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PutMapping("/{id}")
+    public ResponseEntity<BranchResponse> updateBranch(
+            @PathVariable Long id,
+            @Valid @RequestBody BranchUpdateRequest branchUpdateRequest) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(branchService.updateBranch(id, branchUpdateRequest));
+    }
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteBranch(
             @PathVariable Long id) {
         branchService.deleteBranch(id);
