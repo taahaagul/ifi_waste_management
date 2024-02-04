@@ -1,6 +1,7 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.request.CountryRequest;
+import com.taahaagul.ifiwastemanagement.request.CountryUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.CountryResponse;
 import com.taahaagul.ifiwastemanagement.service.CountryService;
 import jakarta.validation.Valid;
@@ -34,7 +35,16 @@ public class CountryController {
                 .body(countryService.createCountry(countryRequest));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PutMapping("/{id}")
+    public ResponseEntity<CountryResponse> updateCountry(
+            @PathVariable Long id,
+            @Valid @RequestBody CountryUpdateRequest countryUpdateRequest) {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(countryService.updateCountry(id, countryUpdateRequest));
+    }
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCountry(@PathVariable Long id) {
         countryService.deleteCountry(id);
         return ResponseEntity.status(HttpStatus.OK)
