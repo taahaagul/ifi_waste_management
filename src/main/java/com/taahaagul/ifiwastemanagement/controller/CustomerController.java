@@ -31,13 +31,12 @@ public class CustomerController {
     }
 
     @PutMapping("/{customerId}")
-    public ResponseEntity<String> updateCustomer(
+    public ResponseEntity<CustomerResponse> updateCustomer(
             @PathVariable Long customerId,
             @Valid @RequestBody CustomerUpdateRequest customerUpdateRequest) {
 
-        customerService.updateCustomer(customerId, customerUpdateRequest);
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Customer updated successfully");
+                .body(customerService.updateCustomer(customerId, customerUpdateRequest));
     }
 
     @DeleteMapping("/{customerId}")

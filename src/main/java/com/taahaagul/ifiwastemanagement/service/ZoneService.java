@@ -8,6 +8,7 @@ import com.taahaagul.ifiwastemanagement.repository.CarRepository;
 import com.taahaagul.ifiwastemanagement.repository.CustomerRepository;
 import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
 import com.taahaagul.ifiwastemanagement.request.ZoneRequest;
+import com.taahaagul.ifiwastemanagement.request.ZoneUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.ZoneResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class ZoneService {
     private final CustomerRepository customerRepository;
     private final CarRepository carRepository;
 
-    public void createZone(ZoneRequest zoneRequest) {
+    public ZoneResponse createZone(ZoneRequest zoneRequest) {
         Branch foundedBranch = branchRepository.findById(zoneRequest.getBranchId())
                 .orElseThrow(() -> new ResourceNotFoundException("Zone", "BranchId", zoneRequest.getBranchId().toString()));
 
@@ -37,7 +38,7 @@ public class ZoneService {
                 .branch(foundedBranch)
                 .build();
 
-        zoneRepository.save(zone);
+        return new ZoneResponse(zoneRepository.save(zone));
     }
 
     public Page<ZoneResponse> getAllZone(Pageable pageable) {
@@ -51,8 +52,17 @@ public class ZoneService {
         Zone foundedZone = zoneRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Zone", "id", id.toString()));
 
-        customerRepository.unassignCustomersFromZone(id);
-        carRepository.unassignCarsFromZone(id);
+        customerRepository.removeZoneFromCustomers(id);
+        carRepository.removeZoneFromCars(id);
         zoneRepository.delete(foundedZone);
+    }
+
+    public ZoneResponse updateZone(Long id, ZoneUpdateRequest request) {
+        Zone foundedZone = zoneRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Zone", "id", id.toString()));
+        foundedZone.setZoneCode(request.getZoneCode());
+        foundedZone.setZoneName(request.getZoneName());
+
+        return new ZoneResponse(zoneRepository.save(foundedZone));
     }
 }

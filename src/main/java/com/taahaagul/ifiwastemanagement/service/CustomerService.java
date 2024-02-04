@@ -41,7 +41,7 @@ public class CustomerService {
         return new CustomerResponse(customerRepository.save(customer));
     }
 
-    public void updateCustomer(Long customerId, CustomerUpdateRequest customerUpdateRequest) {
+    public CustomerResponse updateCustomer(Long customerId, CustomerUpdateRequest customerUpdateRequest) {
         Customer foundedCustomer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer", "customerId", customerId.toString()));
 
@@ -53,7 +53,7 @@ public class CustomerService {
         foundedCustomer.setLongitude(customerUpdateRequest.getLongitude());
         foundedCustomer.setEnabled(customerUpdateRequest.getEnabled());
 
-        customerRepository.save(foundedCustomer);
+        return new CustomerResponse(customerRepository.save(foundedCustomer));
     }
 
     public void deleteCustomer(Long customerId) {

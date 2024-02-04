@@ -1,6 +1,7 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.request.ZoneRequest;
+import com.taahaagul.ifiwastemanagement.request.ZoneUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.ZoneResponse;
 import com.taahaagul.ifiwastemanagement.service.ZoneService;
 import jakarta.validation.Valid;
@@ -35,14 +36,21 @@ public class ZoneController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createZone(
+    public ResponseEntity<ZoneResponse> createZone(
             @Valid @RequestBody ZoneRequest zoneRequest) {
-        zoneService.createZone(zoneRequest);
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Zone created successfully");
+                .body(zoneService.createZone(zoneRequest));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PutMapping("/{id}")
+    public ResponseEntity<ZoneResponse> updateZone(
+            @PathVariable Long id,
+            @Valid @RequestBody ZoneUpdateRequest request) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(zoneService.updateZone(id, request));
+    }
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteZone(
             @PathVariable Long id) {
         zoneService.deleteZone(id);

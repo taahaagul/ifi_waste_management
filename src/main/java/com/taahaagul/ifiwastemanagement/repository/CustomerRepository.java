@@ -21,8 +21,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Query("SELECT c FROM Customer c JOIN c.zone z JOIN z.branch b JOIN b.district d WHERE d.id = :districtId")
     Page<Customer> findAllCustomersByDistrictId(@Param("districtId") Long districtId, Pageable pageable);
 
-    @Transactional
     @Modifying
-    @Query("UPDATE Customer c SET c.zone = null WHERE c.zone.id = :id")
-    void unassignCustomersFromZone(Long id);
+    @Query("UPDATE Customer c SET c.zone = null WHERE c.zone.id = :zoneId")
+    void removeZoneFromCustomers(@Param("zoneId") Long id);
 }
