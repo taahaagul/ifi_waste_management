@@ -1,6 +1,7 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.request.CityRequest;
+import com.taahaagul.ifiwastemanagement.request.CityUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.CityResponse;
 import com.taahaagul.ifiwastemanagement.service.CityService;
 import jakarta.validation.Valid;
@@ -27,14 +28,22 @@ public class CityController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createCity(
+    public ResponseEntity<CityResponse> createCity(
             @Valid @RequestBody CityRequest request) {
-        cityService.createCity(request);
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body("City added");
+                .body(cityService.createCity(request));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PutMapping("/{cityId}")
+    public ResponseEntity<CityResponse> updateCity(
+            @PathVariable("cityId") Long cityId,
+            @Valid @RequestBody CityUpdateRequest request) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(cityService.updateCity(cityId, request));
+    }
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCity(@PathVariable("id") Long id) {
         cityService.deleteCity(id);
         return ResponseEntity.status(HttpStatus.OK)
