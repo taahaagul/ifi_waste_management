@@ -69,27 +69,6 @@ public class CustomerService {
         return customers.map(CustomerResponse::new);
     }
 
-    public Page<CustomerResponse> getZoneCustomers(Long zoneId, Pageable pageable) {
-        Zone foundedZone = zoneRepository.findById(zoneId)
-                .orElseThrow(() -> new ResourceNotFoundException("Zone", "zoneId", zoneId.toString()));
-
-        Page<Customer> zoneCustomers = customerRepository.findByZone(foundedZone, pageable);
-
-        return zoneCustomers.map(CustomerResponse::new);
-    }
-
-    public Page<CustomerResponse> getBranchCustomers(Long branchId, Pageable pageable) {
-        Page<Customer> branchCustomers = customerRepository.findByBranchId(branchId, pageable);
-
-        return branchCustomers.map(CustomerResponse::new);
-    }
-
-    public Page<CustomerResponse> getDistrictCustomers(Long districtId, Pageable pageable) {
-        Page<Customer> districtCustomers = customerRepository.findAllCustomersByDistrictId(districtId, pageable);
-
-        return districtCustomers.map(CustomerResponse::new);
-    }
-
     public void assignCustomerZone(Long customerId, Long zoneId) {
         Customer foundedCustomer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer", "customerId", customerId.toString()));

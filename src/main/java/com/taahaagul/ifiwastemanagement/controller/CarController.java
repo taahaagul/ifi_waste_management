@@ -73,7 +73,7 @@ public class CarController {
                 .body("Car deleted successfully");
     }
 
-    @GetMapping("/carUsers/{carId}")
+    @GetMapping("/{carId}/users")
     public ResponseEntity<List<UserResponse>> getCarUsers(
             @PathVariable Long carId) {
         return ResponseEntity.status(HttpStatus.OK)
