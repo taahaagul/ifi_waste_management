@@ -59,11 +59,11 @@ public class ZoneController {
     }
 
     @PutMapping("/{zoneId}/branch/{branchId}")
-    public ResponseEntity<String> assignZoneBranch(
+    public ResponseEntity<ZoneResponse> assignZoneBranch(
             @PathVariable Long zoneId,
             @PathVariable Long branchId) {
-        zoneService.assignZoneBranch(zoneId, branchId);
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Zone branch updated successfully");
+                .body(zoneService.assignZoneBranch(zoneId, branchId));
     }
 }

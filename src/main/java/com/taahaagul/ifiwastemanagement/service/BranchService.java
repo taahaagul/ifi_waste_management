@@ -60,4 +60,16 @@ public class BranchService {
 
         return new BranchResponse(branchRepository.save(foundedBranch));
     }
+
+    public BranchResponse assignBranchZone(Long branchId, Long districtId) {
+        Branch foundedBranch = branchRepository.findById(branchId)
+                .orElseThrow(() -> new ResourceNotFoundException("Branch", "id", branchId.toString()));
+
+        District foundedDistrict = districtRepository.findById(districtId)
+                .orElseThrow(() -> new ResourceNotFoundException("District", "id", districtId.toString()));
+
+        foundedBranch.setDistrict(foundedDistrict);
+
+        return new BranchResponse(branchRepository.save(foundedBranch));
+    }
 }

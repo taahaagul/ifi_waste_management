@@ -56,4 +56,12 @@ public class BranchController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Branch deleted successfully");
     }
+
+    @PutMapping("/{branchId}/district/{districtId}")
+    public ResponseEntity<BranchResponse> assignBranchZone(
+            @PathVariable Long branchId,
+            @PathVariable Long districtId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(branchService.assignBranchZone(branchId, districtId));
+    }
 }
