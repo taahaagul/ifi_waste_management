@@ -50,4 +50,12 @@ public class DistrictController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body("District deleted");
     }
+
+    @PutMapping("/{districtId}/city/{cityId}")
+    public ResponseEntity<DistrictResponse> assignDistrictCity(
+            @PathVariable Long districtId,
+            @PathVariable Long cityId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(districtService.assignDistrictCity(districtId, cityId));
+    }
 }

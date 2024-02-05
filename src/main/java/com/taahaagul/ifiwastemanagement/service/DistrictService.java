@@ -63,4 +63,16 @@ public class DistrictService {
 
         return new DistrictResponse(districtRepository.save(foundedDistrict));
     }
+
+    public DistrictResponse assignDistrictCity(Long districtId, Long cityId) {
+        District foundedDistrict = districtRepository.findById(districtId)
+                .orElseThrow(() -> new ResourceNotFoundException("District", "id", districtId.toString()));
+
+        City foundedCity = cityRepository.findById(cityId)
+                .orElseThrow(() -> new ResourceNotFoundException("City", "id", cityId.toString()));
+
+        foundedDistrict.setCity(foundedCity);
+
+        return new DistrictResponse(districtRepository.save(foundedDistrict));
+    }
 }
