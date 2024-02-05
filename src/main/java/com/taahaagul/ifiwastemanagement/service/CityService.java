@@ -63,4 +63,16 @@ public class CityService {
 
         return new CityResponse(cityRepository.save(foundedCity));
     }
+
+    public CityResponse assignCityCountry(Long cityId, Long countryId) {
+        City foundedCity = cityRepository.findById(cityId)
+                .orElseThrow(() -> new ResourceNotFoundException("City", "id", cityId.toString()));
+
+        Country foundedCountry = countryRepository.findById(countryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Country", "id", countryId.toString()));
+
+        foundedCity.setCountry(foundedCountry);
+
+        return new CityResponse(cityRepository.save(foundedCity));
+    }
 }

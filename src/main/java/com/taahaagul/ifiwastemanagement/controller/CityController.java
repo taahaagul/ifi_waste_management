@@ -49,5 +49,12 @@ public class CityController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body("City deleted");
     }
-    
+
+    @PutMapping("/{cityId}/country/{countryId}")
+    public ResponseEntity<CityResponse> assignCityCountry(
+            @PathVariable Long cityId,
+            @PathVariable Long countryId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(cityService.assignCityCountry(cityId, countryId));
+    }
 }
