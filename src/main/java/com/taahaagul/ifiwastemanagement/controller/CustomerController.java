@@ -72,7 +72,7 @@ public class CustomerController {
     }
 
     @GetMapping("/byZone")
-    public ResponseEntity<Page<CustomerResponse>> getZoneCustomer(
+    public ResponseEntity<Page<CustomerResponse>> getCustomerByZone(
             @RequestParam Long zoneId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {

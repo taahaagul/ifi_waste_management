@@ -41,6 +41,14 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public UserResponse getAnyUser(Long userId) {
+        User foundUser = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId.toString()));;
+
+        return new UserResponse(foundUser);
+    }
+
     public void changePassword(UserChangePaswRequest request) {
         User user = authenticationService.getCurrentUser();
         if(passwordEncoder.matches(request.getOldPasw(), user.getPassword())) {
@@ -50,7 +58,6 @@ public class UserService {
             throw new IncorrectValueException("Old Password is incorrect!");
     }
 
-    @Transactional
     public UserResponse updateUser(Long userId, UserUpdateRequest request) {
         User foundUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId.toString()));
@@ -67,7 +74,6 @@ public class UserService {
         return new UserResponse(userRepository.save(foundUser));
     }
 
-    @Transactional
     public void deleteUser(Long userId) {
         User foundUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId.toString()));
@@ -83,7 +89,6 @@ public class UserService {
         return Arrays.asList(Role.values());
     }
 
-    @Transactional
     public void updateUserRole(Long userId, String userRole) {
         User foundUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId.toString()));
@@ -99,7 +104,6 @@ public class UserService {
         userRepository.save(foundUser);
     }
 
-    @Transactional
     public void changeUserEnabled(Long userId) {
         User foundUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId.toString()));
@@ -116,13 +120,6 @@ public class UserService {
         userRepository.save(foundUser);
     }
 
-    @Transactional(readOnly = true)
-    public UserResponse getAnyUser(Long userId) {
-        User foundUser = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId.toString()));;
-
-        return new UserResponse(foundUser);
-    }
 
     public void assignUserCar(Long userId, Long carId) {
         User foundUser = userRepository.findById(userId)
@@ -135,4 +132,3 @@ public class UserService {
         userRepository.save(foundUser);
     }
 }
-

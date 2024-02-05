@@ -57,4 +57,13 @@ public class ZoneController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Zone deleted successfully");
     }
+
+    @PutMapping("/{zoneId}/branch/{branchId}")
+    public ResponseEntity<String> assignZoneBranch(
+            @PathVariable Long zoneId,
+            @PathVariable Long branchId) {
+        zoneService.assignZoneBranch(zoneId, branchId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Zone branch updated successfully");
+    }
 }

@@ -65,4 +65,15 @@ public class ZoneService {
 
         return new ZoneResponse(zoneRepository.save(foundedZone));
     }
+
+    public void assignZoneBranch(Long zoneId, Long branchId) {
+        Zone foundedZone = zoneRepository.findById(zoneId)
+                .orElseThrow(() -> new ResourceNotFoundException("Zone", "id", zoneId.toString()));
+
+        Branch foundedBranch = branchRepository.findById(branchId)
+                .orElseThrow(() -> new ResourceNotFoundException("Branch", "id", branchId.toString()));
+
+        foundedZone.setBranch(foundedBranch);
+        zoneRepository.save(foundedZone);
+    }
 }
