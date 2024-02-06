@@ -101,4 +101,11 @@ public class CarService {
                 .map(UserResponse::new)
                 .toList();
     }
+
+    public CarResponse getAnyCar(Long carId) {
+        Car foundedCar = carRepository.findById(carId)
+                .orElseThrow(() -> new ResourceNotFoundException("Car", "carId", carId.toString()));
+
+        return new CarResponse(foundedCar);
+    }
 }

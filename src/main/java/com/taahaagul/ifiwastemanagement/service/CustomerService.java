@@ -79,4 +79,11 @@ public class CustomerService {
         foundedCustomer.setZone(foundedZone);
         customerRepository.save(foundedCustomer);
     }
+
+    public CustomerResponse getCustomerById(Long customerId) {
+        Customer foundedCustomer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer", "customerId", customerId.toString()));
+
+        return new CustomerResponse(foundedCustomer);
+    }
 }

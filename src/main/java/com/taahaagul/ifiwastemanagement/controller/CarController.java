@@ -52,7 +52,7 @@ public class CarController {
                 .body("Car zone updated successfully");
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<Page<CarResponse>> getAllCar(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -62,6 +62,12 @@ public class CarController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(carPage);
+    }
+
+    @GetMapping("/{carId}")
+    public ResponseEntity<CarResponse> getAnyCar(@PathVariable Long carId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(carService.getAnyCar(carId));
     }
 
     @DeleteMapping("/{carId}")

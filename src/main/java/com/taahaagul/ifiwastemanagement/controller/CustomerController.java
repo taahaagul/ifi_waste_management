@@ -59,7 +59,7 @@ public class CustomerController {
                 .body("Customer zone updated successfully");
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<Page<CustomerResponse>> getAllCustomer(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -69,5 +69,11 @@ public class CustomerController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(customerPage);
+    }
+
+    @GetMapping("/{customerId}")
+    public ResponseEntity<CustomerResponse> getCustomerById(@PathVariable Long customerId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(customerService.getCustomerById(customerId));
     }
 }
