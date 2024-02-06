@@ -6,10 +6,14 @@ import com.taahaagul.ifiwastemanagement.exception.IllegalOperationException;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.CityRepository;
 import com.taahaagul.ifiwastemanagement.repository.CountryRepository;
+import com.taahaagul.ifiwastemanagement.repository.DistrictRepository;
 import com.taahaagul.ifiwastemanagement.request.CityRequest;
 import com.taahaagul.ifiwastemanagement.request.CityUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.CityResponse;
+import com.taahaagul.ifiwastemanagement.response.DistrictResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +25,7 @@ public class CityService {
 
     private final CountryRepository countryRepository;
     private final CityRepository cityRepository;
+    private final DistrictRepository districtRepository;
 
     public CityResponse createCity(CityRequest request) {
         Country foundedCountry = countryRepository.findById(request.getCountryId())
@@ -74,5 +79,18 @@ public class CityService {
         foundedCity.setCountry(foundedCountry);
 
         return new CityResponse(cityRepository.save(foundedCity));
+    }
+
+    public CityResponse getCityById(Long id) {
+        City foundedCity = cityRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("City", "id", id.toString()));
+
+        return new CityResponse(foundedCity);
+    }
+
+    public Page<DistrictResponse> getCityDistricts(Long cityId, Pageable pageable) {
+
+        return districtRepository.findByCityId(cityId, pageable)
+                .map(DistrictResponse::new);
     }
 }
