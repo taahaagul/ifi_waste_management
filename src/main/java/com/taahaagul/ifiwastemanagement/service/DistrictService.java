@@ -4,12 +4,16 @@ import com.taahaagul.ifiwastemanagement.entity.City;
 import com.taahaagul.ifiwastemanagement.entity.District;
 import com.taahaagul.ifiwastemanagement.exception.IllegalOperationException;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
+import com.taahaagul.ifiwastemanagement.repository.BranchRepository;
 import com.taahaagul.ifiwastemanagement.repository.CityRepository;
 import com.taahaagul.ifiwastemanagement.repository.DistrictRepository;
 import com.taahaagul.ifiwastemanagement.request.DistrictRequest;
 import com.taahaagul.ifiwastemanagement.request.DistrictUpdateRequest;
+import com.taahaagul.ifiwastemanagement.response.BranchResponse;
 import com.taahaagul.ifiwastemanagement.response.DistrictResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +25,7 @@ public class DistrictService {
 
     private final DistrictRepository districtRepository;
     private final CityRepository cityRepository;
+    private final BranchRepository branchRepository;
 
     public DistrictResponse createDistrict(DistrictRequest districtRequest) {
         City foundedCity = cityRepository.findById(districtRequest.getCityId())
@@ -74,5 +79,19 @@ public class DistrictService {
         foundedDistrict.setCity(foundedCity);
 
         return new DistrictResponse(districtRepository.save(foundedDistrict));
+    }
+
+    public DistrictResponse getDistrictById(Long id) {
+        District foundedDistrict = districtRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("District", "id", id.toString()));
+
+        return new DistrictResponse(foundedDistrict);
+    }
+
+
+    public Page<BranchResponse> getDistrictBranches(Long districtId, Pageable pageable) {
+
+        return branchRepository.findByDistrictId(districtId, pageable)
+                .map(BranchResponse::new);
     }
 }
