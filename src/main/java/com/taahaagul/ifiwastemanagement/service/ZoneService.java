@@ -9,6 +9,8 @@ import com.taahaagul.ifiwastemanagement.repository.CustomerRepository;
 import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
 import com.taahaagul.ifiwastemanagement.request.ZoneRequest;
 import com.taahaagul.ifiwastemanagement.request.ZoneUpdateRequest;
+import com.taahaagul.ifiwastemanagement.response.CarResponse;
+import com.taahaagul.ifiwastemanagement.response.CustomerResponse;
 import com.taahaagul.ifiwastemanagement.response.ZoneResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -75,5 +77,25 @@ public class ZoneService {
 
         foundedZone.setBranch(foundedBranch);
         return new ZoneResponse(zoneRepository.save(foundedZone));
+    }
+
+    public ZoneResponse getZoneById(Long id) {
+        Zone foundedZone = zoneRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Zone", "id", id.toString()));
+
+        return new ZoneResponse(foundedZone);
+    }
+
+    public Page<CustomerResponse> getZoneCustomers(Long zoneId, Pageable pageable) {
+
+        return customerRepository.findByZoneId(zoneId, pageable)
+                .map(CustomerResponse::new);
+    }
+
+    public List<CarResponse> getZoneCars(Long zoneId) {
+        return carRepository.findByZoneId(zoneId)
+                .stream()
+                .map(CarResponse::new)
+                .collect(Collectors.toList());
     }
 }

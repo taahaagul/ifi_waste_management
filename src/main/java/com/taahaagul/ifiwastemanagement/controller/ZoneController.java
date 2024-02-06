@@ -2,6 +2,8 @@ package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.request.ZoneRequest;
 import com.taahaagul.ifiwastemanagement.request.ZoneUpdateRequest;
+import com.taahaagul.ifiwastemanagement.response.CarResponse;
+import com.taahaagul.ifiwastemanagement.response.CustomerResponse;
 import com.taahaagul.ifiwastemanagement.response.ZoneResponse;
 import com.taahaagul.ifiwastemanagement.service.ZoneService;
 import jakarta.validation.Valid;
@@ -14,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/TG/zone")
@@ -23,7 +27,7 @@ public class ZoneController {
 
     private final ZoneService zoneService;
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<Page<ZoneResponse>> getAllZone(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -33,6 +37,12 @@ public class ZoneController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(zonePage);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ZoneResponse> getZoneById(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(zoneService.getZoneById(id));
     }
 
     @PostMapping("/create")
@@ -65,5 +75,25 @@ public class ZoneController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(zoneService.assignZoneBranch(zoneId, branchId));
+    }
+
+    @GetMapping("/{zoneId}/customers")
+    public ResponseEntity<Page<CustomerResponse>> getZoneCustomers(
+            @PathVariable Long zoneId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CustomerResponse> zoneCustomers = zoneService.getZoneCustomers(zoneId, pageable);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(zoneCustomers);
+    }
+
+    @GetMapping("/{zoneId}/cars")
+    public ResponseEntity<List<CarResponse>> getZoneCars(
+            @PathVariable Long zoneId) {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(zoneService.getZoneCars(zoneId));
     }
 }

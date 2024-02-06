@@ -10,10 +10,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+
 
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
-    Page<Customer> findByZone(Zone foundedZone, Pageable pageable);
 
     @Query("SELECT c FROM Customer c JOIN c.zone z JOIN z.branch b WHERE b.id = :branchId")
     Page<Customer> findByBranchId(@Param("branchId") Long branchId, Pageable pageable);
@@ -24,4 +25,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Modifying
     @Query("UPDATE Customer c SET c.zone = null WHERE c.zone.id = :zoneId")
     void removeZoneFromCustomers(@Param("zoneId") Long id);
+
+    Page<Customer> findByZoneId(Long zoneId, Pageable pageable);
 }
