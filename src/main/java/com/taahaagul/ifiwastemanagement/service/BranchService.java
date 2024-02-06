@@ -6,9 +6,11 @@ import com.taahaagul.ifiwastemanagement.exception.IllegalOperationException;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.BranchRepository;
 import com.taahaagul.ifiwastemanagement.repository.DistrictRepository;
+import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
 import com.taahaagul.ifiwastemanagement.request.BranchRequest;
 import com.taahaagul.ifiwastemanagement.request.BranchUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.BranchResponse;
+import com.taahaagul.ifiwastemanagement.response.ZoneResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +22,7 @@ public class BranchService {
 
     private final BranchRepository branchRepository;
     private final DistrictRepository districtRepository;
+    private final ZoneRepository zoneRepository;
 
     public BranchResponse createBranch(BranchRequest branchRequest) {
         District foundedDistrict = districtRepository.findById(branchRequest.getDistrictId())
@@ -38,6 +41,13 @@ public class BranchService {
         Page<Branch> branches = branchRepository.findAll(pageable);
 
         return branches.map(BranchResponse::new);
+    }
+
+    public BranchResponse getBranchById(Long id) {
+        Branch foundedBranch = branchRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Branch", "id", id.toString()));
+
+        return new BranchResponse(foundedBranch);
     }
 
     public void deleteBranch(Long id) {
@@ -71,5 +81,11 @@ public class BranchService {
         foundedBranch.setDistrict(foundedDistrict);
 
         return new BranchResponse(branchRepository.save(foundedBranch));
+    }
+
+    public Page<ZoneResponse> getBranchZones(Long branchId, Pageable pageable) {
+
+        return zoneRepository.findByBranchId(branchId, pageable)
+                .map(ZoneResponse::new);
     }
 }
