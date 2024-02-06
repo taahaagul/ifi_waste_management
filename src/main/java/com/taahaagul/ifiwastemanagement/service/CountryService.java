@@ -3,11 +3,15 @@ package com.taahaagul.ifiwastemanagement.service;
 import com.taahaagul.ifiwastemanagement.entity.Country;
 import com.taahaagul.ifiwastemanagement.exception.IllegalOperationException;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
+import com.taahaagul.ifiwastemanagement.repository.CityRepository;
 import com.taahaagul.ifiwastemanagement.repository.CountryRepository;
 import com.taahaagul.ifiwastemanagement.request.CountryRequest;
 import com.taahaagul.ifiwastemanagement.request.CountryUpdateRequest;
+import com.taahaagul.ifiwastemanagement.response.CityResponse;
 import com.taahaagul.ifiwastemanagement.response.CountryResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +22,7 @@ import java.util.stream.Collectors;
 public class CountryService {
 
     private final CountryRepository countryRepository;
+    private final CityRepository cityRepository;
 
     public CountryResponse createCountry(CountryRequest countryRequest) {
         Country country = Country.builder()
@@ -57,5 +62,18 @@ public class CountryService {
         foundedCountry.setCounrtyCode(countryUpdateRequest.getCountryCode());
 
         return new CountryResponse(countryRepository.save(foundedCountry));
+    }
+
+    public CountryResponse getCountryById(Long id) {
+        Country foundedCountry = countryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Country", "id", id.toString()));
+
+        return new CountryResponse(foundedCountry);
+    }
+
+    public Page<CityResponse> getCountryCities(Long countryId, Pageable pageable) {
+
+        return cityRepository.findByCountryId(countryId, pageable)
+                .map(CityResponse::new);
     }
 }
