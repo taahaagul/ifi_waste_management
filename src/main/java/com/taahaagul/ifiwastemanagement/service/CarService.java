@@ -1,14 +1,13 @@
 package com.taahaagul.ifiwastemanagement.service;
 
+import com.taahaagul.ifiwastemanagement.dto.CarDTO;
 import com.taahaagul.ifiwastemanagement.entity.Car;
 import com.taahaagul.ifiwastemanagement.entity.Zone;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
+import com.taahaagul.ifiwastemanagement.mapper.CarMapper;
 import com.taahaagul.ifiwastemanagement.repository.CarRepository;
 import com.taahaagul.ifiwastemanagement.repository.UserRepository;
 import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
-import com.taahaagul.ifiwastemanagement.request.CarRequest;
-import com.taahaagul.ifiwastemanagement.request.CarUpdateRequest;
-import com.taahaagul.ifiwastemanagement.response.CarResponse;
 import com.taahaagul.ifiwastemanagement.response.UserResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,47 +22,29 @@ import java.util.List;
 public class CarService {
 
     private final ZoneRepository zoneRepository;
+    private final CarMapper carMapper;
     private final CarRepository carRepository;
     private final UserRepository userRepository;
 
-    public CarResponse createCar(CarRequest carRequest) {
+    public CarDTO createCar(CarDTO carDTO) {
         Zone foundedZone = null;
-        if (carRequest.getZoneId() != null) {
-            foundedZone = zoneRepository.findById(carRequest.getZoneId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Zone", "zoneId", carRequest.getZoneId().toString()));
+        if (carDTO.getZoneId() != null) {
+            foundedZone = zoneRepository.findById(carDTO.getZoneId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Zone", "zoneId", carDTO.getZoneId().toString()));
         }
 
-        Car car = Car.builder()
-                .zone(foundedZone)
-                .targoNo(carRequest.getTargoNo())
-                .ownerName(carRequest.getOwnerName())
-                .ownerSurname(carRequest.getOwnerSurname())
-                .ownerPhone(carRequest.getOwnerPhone())
-                .taxFee(carRequest.getTaxFee())
-                .vehicleClass(carRequest.getVehicleClass())
-                .amount(carRequest.getAmount())
-                .fuelType(carRequest.getFuelType())
-                .status(carRequest.isStatus())
-                .build();
-
-        return new CarResponse(carRepository.save(car));
+        Car savedCar = carMapper.mapToCar(carDTO, new Car());
+        savedCar.setZone(foundedZone);
+        return carMapper.mapToCarDTO(carRepository.save(savedCar));
     }
 
-    public CarResponse updateCar(Long carId, CarUpdateRequest carUpdateRequest) {
-        Car foundedCar = carRepository.findById(carId)
-                .orElseThrow(() -> new ResourceNotFoundException("Car", "carId", carId.toString()));
+    public CarDTO updateCar(CarDTO carDTO) {
+        Car foundedCar = carRepository.findById(carDTO.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Car", "carId", carDTO.getId().toString()));
 
-        foundedCar.setTargoNo(carUpdateRequest.getTargoNo());
-        foundedCar.setOwnerName(carUpdateRequest.getOwnerName());
-        foundedCar.setOwnerSurname(carUpdateRequest.getOwnerSurname());
-        foundedCar.setOwnerPhone(carUpdateRequest.getOwnerPhone());
-        foundedCar.setTaxFee(carUpdateRequest.getTaxFee());
-        foundedCar.setVehicleClass(carUpdateRequest.getVehicleClass());
-        foundedCar.setAmount(carUpdateRequest.getAmount());
-        foundedCar.setFuelType(carUpdateRequest.getFuelType());
-        foundedCar.setStatus(carUpdateRequest.isStatus());
+        carMapper.mapToCar(carDTO, foundedCar);
 
-        return new CarResponse(carRepository.save(foundedCar));
+        return carMapper.mapToCarDTO(carRepository.save(foundedCar));
     }
 
     public void updateCarZone(Long carId, Long zoneId) {
@@ -77,9 +58,10 @@ public class CarService {
         carRepository.save(foundedCar);
     }
 
-    public Page<CarResponse> getAllCar(Pageable pageable) {
-        return carRepository.findAll(pageable)
-                .map(CarResponse::new);
+    public Page<CarDTO> getAllCar(Pageable pageable) {
+        Page<Car> cars = carRepository.findAll(pageable);
+
+        return cars.map(carMapper::mapToCarDTO);
     }
 
     @Transactional
@@ -102,10 +84,10 @@ public class CarService {
                 .toList();
     }
 
-    public CarResponse getAnyCar(Long carId) {
+    public CarDTO getAnyCar(Long carId) {
         Car foundedCar = carRepository.findById(carId)
                 .orElseThrow(() -> new ResourceNotFoundException("Car", "carId", carId.toString()));
 
-        return new CarResponse(foundedCar);
+        return carMapper.mapToCarDTO(foundedCar);
     }
 }

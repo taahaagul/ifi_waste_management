@@ -1,8 +1,6 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
-import com.taahaagul.ifiwastemanagement.request.CarRequest;
-import com.taahaagul.ifiwastemanagement.request.CarUpdateRequest;
-import com.taahaagul.ifiwastemanagement.response.CarResponse;
+import com.taahaagul.ifiwastemanagement.dto.CarDTO;
 import com.taahaagul.ifiwastemanagement.response.UserResponse;
 import com.taahaagul.ifiwastemanagement.service.CarService;
 import jakarta.validation.Valid;
@@ -26,20 +24,19 @@ public class CarController {
     private final CarService carService;
 
     @PostMapping("/create")
-    public ResponseEntity<CarResponse> createCar(
-            @Valid @RequestBody CarRequest carRequest) {
+    public ResponseEntity<CarDTO> createCar(
+            @Valid @RequestBody CarDTO carDTO) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(carService.createCar(carRequest));
+                .body(carService.createCar(carDTO));
     }
 
-    @PutMapping("/{carId}")
-    public ResponseEntity<CarResponse> updateCar(
-            @PathVariable Long carId,
-            @Valid @RequestBody CarUpdateRequest carUpdateRequest) {
+    @PutMapping("/update")
+    public ResponseEntity<CarDTO> updateCar(
+            @Valid @RequestBody CarDTO carDTO) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(carService.updateCar(carId, carUpdateRequest));
+                .body(carService.updateCar(carDTO));
     }
 
     @PutMapping("/{carId}/zone/{zoneId}")
@@ -53,19 +50,19 @@ public class CarController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Page<CarResponse>> getAllCar(
+    public ResponseEntity<Page<CarDTO>> getAllCar(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<CarResponse> carPage = carService.getAllCar(pageable);
+        Page<CarDTO> carPage = carService.getAllCar(pageable);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(carPage);
     }
 
     @GetMapping("/{carId}")
-    public ResponseEntity<CarResponse> getAnyCar(@PathVariable Long carId) {
+    public ResponseEntity<CarDTO> getAnyCar(@PathVariable Long carId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(carService.getAnyCar(carId));
     }

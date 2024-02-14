@@ -1,9 +1,6 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.dto.CustomerDTO;
-import com.taahaagul.ifiwastemanagement.request.CustomerRequest;
-import com.taahaagul.ifiwastemanagement.request.CustomerUpdateRequest;
-import com.taahaagul.ifiwastemanagement.response.CustomerResponse;
 import com.taahaagul.ifiwastemanagement.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

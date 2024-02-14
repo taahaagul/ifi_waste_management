@@ -1,5 +1,6 @@
 package com.taahaagul.ifiwastemanagement.dto;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,19 +15,19 @@ public class CustomerDTO {
 
     private Long id;
 
-    @NotNull
+    @NotEmpty(message = "customerName cannot be null or empty")
     private String customerName;
-    @NotNull
+    @NotEmpty(message = "houseNumber cannot be null or empty")
     private String houseNumber;
-    @NotNull
+    @NotEmpty(message = "mobileNumber cannot be null or empty")
     private String mobileNumber;
-    @NotNull
+    @NotEmpty(message = "specialRate cannot be null or empty")
     private String specialRate;
-    @NotNull
+    @NotEmpty(message = "latitude cannot be null or empty")
     private String latitude;
-    @NotNull
+    @NotEmpty(message = "longitude cannot be null or empty")
     private String longitude;
-    @NotNull
+    @NotNull(message = "status cannot be null")
     private boolean enabled;
 
     private String zoneName;
