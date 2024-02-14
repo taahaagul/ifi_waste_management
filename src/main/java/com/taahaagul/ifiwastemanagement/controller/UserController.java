@@ -1,5 +1,6 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
+import com.taahaagul.ifiwastemanagement.dto.UserDTO;
 import com.taahaagul.ifiwastemanagement.entity.Role;
 import com.taahaagul.ifiwastemanagement.request.RegisterRequest;
 import com.taahaagul.ifiwastemanagement.request.UserChangePaswRequest;
@@ -29,7 +30,7 @@ public class UserController {
     private final AuthenticationService authenticationService;
 
     @GetMapping
-    public ResponseEntity<UserResponse> getCurrentUser() {
+    public ResponseEntity<UserDTO> getCurrentUser() {
         return ResponseEntity.status(OK)
                 .body(userService.getCurrentUser());
     }
@@ -43,7 +44,7 @@ public class UserController {
 
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('user:read')")
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
         return ResponseEntity.status(OK)
                 .body(userService.getAllUsers());
     }

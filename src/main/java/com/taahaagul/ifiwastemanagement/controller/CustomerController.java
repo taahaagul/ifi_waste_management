@@ -1,5 +1,6 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
+import com.taahaagul.ifiwastemanagement.dto.CustomerDTO;
 import com.taahaagul.ifiwastemanagement.request.CustomerRequest;
 import com.taahaagul.ifiwastemanagement.request.CustomerUpdateRequest;
 import com.taahaagul.ifiwastemanagement.response.CustomerResponse;
@@ -23,20 +24,17 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping("/create")
-    public ResponseEntity<CustomerResponse> createCustomer(
-            @Valid @RequestBody CustomerRequest customerRequest) {
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(customerService.createCustomer(customerRequest));
+    public ResponseEntity<CustomerDTO> createCustomer(
+            @Valid @RequestBody CustomerDTO customerDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(customerService.createCustomer(customerDTO));
     }
 
-    @PutMapping("/{customerId}")
-    public ResponseEntity<CustomerResponse> updateCustomer(
-            @PathVariable Long customerId,
-            @Valid @RequestBody CustomerUpdateRequest customerUpdateRequest) {
-
+    @PutMapping("/update")
+    public ResponseEntity<CustomerDTO> updateCustomer(
+            @Valid @RequestBody CustomerDTO customerDTO) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(customerService.updateCustomer(customerId, customerUpdateRequest));
+                .body(customerService.updateCustomer(customerDTO));
     }
 
     @DeleteMapping("/{customerId}")
@@ -60,19 +58,19 @@ public class CustomerController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Page<CustomerResponse>> getAllCustomer(
+    public ResponseEntity<Page<CustomerDTO>> getAllCustomer(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<CustomerResponse> customerPage = customerService.getAllCustomer(pageable);
+        Page<CustomerDTO> customerPage = customerService.getAllCustomer(pageable);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(customerPage);
     }
 
     @GetMapping("/{customerId}")
-    public ResponseEntity<CustomerResponse> getCustomerById(@PathVariable Long customerId) {
+    public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable Long customerId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(customerService.getCustomerById(customerId));
     }

@@ -1,11 +1,13 @@
 package com.taahaagul.ifiwastemanagement.service;
 
+import com.taahaagul.ifiwastemanagement.dto.UserDTO;
 import com.taahaagul.ifiwastemanagement.entity.Car;
 import com.taahaagul.ifiwastemanagement.entity.Role;
 import com.taahaagul.ifiwastemanagement.entity.User;
 import com.taahaagul.ifiwastemanagement.exception.IncorrectValueException;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.exception.RoleUnmathcedException;
+import com.taahaagul.ifiwastemanagement.mapper.UserDTOMapper;
 import com.taahaagul.ifiwastemanagement.repository.CarRepository;
 import com.taahaagul.ifiwastemanagement.repository.UserRepository;
 import com.taahaagul.ifiwastemanagement.request.UserChangePaswRequest;
@@ -25,19 +27,20 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserDTOMapper userDTOMapper;
     private final AuthenticationService authenticationService;
     private final PasswordEncoder passwordEncoder;
     private final CarRepository carRepository;
 
-    public UserResponse getCurrentUser() {
-        return new UserResponse(authenticationService.getCurrentUser());
+    public UserDTO getCurrentUser() {
+        return userDTOMapper.apply(authenticationService.getCurrentUser());
     }
 
     @Transactional(readOnly = true)
-    public List<UserResponse> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
         List<User> list = userRepository.findAll();
         return list.stream()
-                .map(user -> new UserResponse(user))
+                .map(userDTOMapper)
                 .collect(Collectors.toList());
     }
 

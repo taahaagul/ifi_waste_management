@@ -1,8 +1,10 @@
 package com.taahaagul.ifiwastemanagement.service;
 
+import com.taahaagul.ifiwastemanagement.dto.CustomerDTO;
 import com.taahaagul.ifiwastemanagement.entity.Customer;
 import com.taahaagul.ifiwastemanagement.entity.Zone;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
+import com.taahaagul.ifiwastemanagement.mapper.CustomerMapper;
 import com.taahaagul.ifiwastemanagement.repository.CustomerRepository;
 import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
 import com.taahaagul.ifiwastemanagement.request.CustomerRequest;
@@ -19,41 +21,27 @@ import org.springframework.stereotype.Service;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final CustomerMapper customerMapper;
     private final ZoneRepository zoneRepository;
 
-    public CustomerResponse createCustomer(CustomerRequest customerRequest) {
+    public CustomerDTO createCustomer(CustomerDTO customerDTO) {
         Zone foundedZone = null;
-        if (customerRequest.getZoneId() != null)
-            foundedZone = zoneRepository.findById(customerRequest.getZoneId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Zone", "zoneId", customerRequest.getZoneId().toString()));
+        if (customerDTO.getZoneId() != null)
+            foundedZone = zoneRepository.findById(customerDTO.getZoneId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Zone", "zoneId", customerDTO.getZoneId().toString()));
 
-        Customer customer = Customer.builder()
-                .customerName(customerRequest.getCustomerName())
-                .houseNumber(customerRequest.getHouseNumber())
-                .mobileNumber(customerRequest.getMobileNumber())
-                .specialRate(customerRequest.getSpecialRate())
-                .latitude(customerRequest.getLatitude())
-                .longitude(customerRequest.getLongitude())
-                .enabled(customerRequest.getEnabled())
-                .zone(foundedZone)
-                .build();
-
-        return new CustomerResponse(customerRepository.save(customer));
+        Customer savedCustomer = customerMapper.mapToCustomer(customerDTO, new Customer());
+        savedCustomer.setZone(foundedZone);
+        return customerMapper.mapToCustomerDTO(customerRepository.save(savedCustomer));
     }
 
-    public CustomerResponse updateCustomer(Long customerId, CustomerUpdateRequest customerUpdateRequest) {
-        Customer foundedCustomer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer", "customerId", customerId.toString()));
+    public CustomerDTO updateCustomer(CustomerDTO customerDTO) {
+        Customer foundedCustomer = customerRepository.findById(customerDTO.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Customer", "customerId", customerDTO.getId().toString()));
 
-        foundedCustomer.setCustomerName(customerUpdateRequest.getCustomerName());
-        foundedCustomer.setHouseNumber(customerUpdateRequest.getHouseNumber());
-        foundedCustomer.setMobileNumber(customerUpdateRequest.getMobileNumber());
-        foundedCustomer.setSpecialRate(customerUpdateRequest.getSpecialRate());
-        foundedCustomer.setLatitude(customerUpdateRequest.getLatitude());
-        foundedCustomer.setLongitude(customerUpdateRequest.getLongitude());
-        foundedCustomer.setEnabled(customerUpdateRequest.getEnabled());
+        customerMapper.mapToCustomer(customerDTO, foundedCustomer);
 
-        return new CustomerResponse(customerRepository.save(foundedCustomer));
+        return customerMapper.mapToCustomerDTO(customerRepository.save(foundedCustomer));
     }
 
     public void deleteCustomer(Long customerId) {
@@ -63,10 +51,10 @@ public class CustomerService {
         customerRepository.delete(foundedCustomer);
     }
 
-    public Page<CustomerResponse> getAllCustomer(Pageable pageable) {
+    public Page<CustomerDTO> getAllCustomer(Pageable pageable) {
         Page<Customer> customers = customerRepository.findAll(pageable);
 
-        return customers.map(CustomerResponse::new);
+        return customers.map(customerMapper::mapToCustomerDTO);
     }
 
     public void assignCustomerZone(Long customerId, Long zoneId) {
@@ -80,10 +68,10 @@ public class CustomerService {
         customerRepository.save(foundedCustomer);
     }
 
-    public CustomerResponse getCustomerById(Long customerId) {
+    public CustomerDTO getCustomerById(Long customerId) {
         Customer foundedCustomer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer", "customerId", customerId.toString()));
 
-        return new CustomerResponse(foundedCustomer);
+        return customerMapper.mapToCustomerDTO(foundedCustomer);
     }
 }
