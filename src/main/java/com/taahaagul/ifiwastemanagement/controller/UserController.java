@@ -2,10 +2,8 @@ package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.dto.UserDTO;
 import com.taahaagul.ifiwastemanagement.entity.Role;
-import com.taahaagul.ifiwastemanagement.request.RegisterRequest;
-import com.taahaagul.ifiwastemanagement.request.UserChangePaswRequest;
-import com.taahaagul.ifiwastemanagement.request.UserUpdateRequest;
-import com.taahaagul.ifiwastemanagement.response.UserResponse;
+import com.taahaagul.ifiwastemanagement.dto.RegisterDTO;
+import com.taahaagul.ifiwastemanagement.dto.ChangePasswordDTO;
 import com.taahaagul.ifiwastemanagement.service.AuthenticationService;
 import com.taahaagul.ifiwastemanagement.service.UserService;
 import jakarta.validation.Valid;
@@ -29,7 +27,7 @@ public class UserController {
     private final UserService userService;
     private final AuthenticationService authenticationService;
 
-    @GetMapping
+    @GetMapping("/current")
     public ResponseEntity<UserDTO> getCurrentUser() {
         return ResponseEntity.status(OK)
                 .body(userService.getCurrentUser());
@@ -37,7 +35,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     @PreAuthorize("hasAuthority('user:read')")
-    public ResponseEntity<UserResponse> getAnyUser(@PathVariable Long userId) {
+    public ResponseEntity<UserDTO> getAnyUser(@PathVariable Long userId) {
         return ResponseEntity.status(OK)
                 .body(userService.getAnyUser(userId));
     }
@@ -52,23 +50,22 @@ public class UserController {
     @PostMapping("/register")
     @PreAuthorize("hasAuthority('user:create')")
     public ResponseEntity<String> register(
-            @Valid @RequestBody RegisterRequest request
+            @Valid @RequestBody RegisterDTO request
     ) {
         authenticationService.register(request);
         return ResponseEntity.status(OK)
                 .body("User Registiration Successfully");
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping("/update")
     @PreAuthorize("hasAuthority('user:update')")
-    public ResponseEntity<UserResponse> updateUser(
-            @PathVariable Long userId,
-            @Valid @RequestBody UserUpdateRequest request) {
+    public ResponseEntity<UserDTO> updateUser(
+            @Valid @RequestBody UserDTO userDTO) {
         return ResponseEntity.status(OK)
-                .body(userService.updateUser(userId, request));
+                .body(userService.updateUser(userDTO));
     }
 
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/delete/{userId}")
     @PreAuthorize("hasAuthority('user:delete')")
     public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
@@ -78,7 +75,7 @@ public class UserController {
 
     @PutMapping("/change-password")
     public ResponseEntity<String> changePassword(
-            @Valid @RequestBody UserChangePaswRequest request) {
+            @Valid @RequestBody ChangePasswordDTO request) {
         userService.changePassword(request);
         return ResponseEntity.status(HttpStatus.ACCEPTED)
                 .body("Change Password Successfully");

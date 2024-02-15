@@ -1,10 +1,10 @@
-package com.taahaagul.ifiwastemanagement.request;
+package com.taahaagul.ifiwastemanagement.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class LoginRequest {
+public class LoginDTO {
 
     @NotBlank(message = "Email can not be a null or empty")
     private String email;

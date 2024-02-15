@@ -1,11 +1,11 @@
-package com.taahaagul.ifiwastemanagement.request;
+package com.taahaagul.ifiwastemanagement.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
-public class ForgetPaswRequest {
+public class ForgetPasswordDTO {
 
     @NotEmpty(message = "token can not be a null or empty")
     private String token;

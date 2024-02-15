@@ -1,11 +1,11 @@
-package com.taahaagul.ifiwastemanagement.request;
+package com.taahaagul.ifiwastemanagement.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class RegisterRequest {
+public class RegisterDTO {
 
     @NotBlank(message = "firstName is required")
     private String firstName;

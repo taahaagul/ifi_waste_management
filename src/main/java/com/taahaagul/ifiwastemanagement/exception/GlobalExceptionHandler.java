@@ -1,6 +1,6 @@
 package com.taahaagul.ifiwastemanagement.exception;
 
-import com.taahaagul.ifiwastemanagement.response.ErrorResponse;
+import com.taahaagul.ifiwastemanagement.dto.ErrorDTO;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -37,80 +37,80 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGlobalException(
+    public ResponseEntity<ErrorDTO> handleGlobalException(
             Exception exception, WebRequest webRequest) {
 
-        ErrorResponse errorResponse = new ErrorResponse(
+        ErrorDTO errorDTO = new ErrorDTO(
                 webRequest.getDescription(false),
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 exception.getMessage(),
                 LocalDateTime.now()
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(errorDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDeniedException(
+    public ResponseEntity<ErrorDTO> handleAccessDeniedException(
             AccessDeniedException exception, WebRequest webRequest) {
 
-        ErrorResponse errorResponse = new ErrorResponse(
+        ErrorDTO errorDTO = new ErrorDTO(
                 webRequest.getDescription(false),
                 HttpStatus.FORBIDDEN,
                 exception.getMessage(),
                 LocalDateTime.now()
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(errorDTO, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
+    public ResponseEntity<ErrorDTO> handleResourceNotFoundException(
             ResourceNotFoundException exception, WebRequest webRequest) {
 
-        ErrorResponse errorResponse = new ErrorResponse(
+        ErrorDTO errorDTO = new ErrorDTO(
                 webRequest.getDescription(false),
                 HttpStatus.NOT_FOUND,
                 exception.getMessage(),
                 LocalDateTime.now()
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(errorDTO, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(IllegalOperationException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalOperationException(
+    public ResponseEntity<ErrorDTO> handleIllegalOperationException(
             IllegalOperationException exception, WebRequest webRequest) {
 
-        ErrorResponse errorResponse = new ErrorResponse(
+        ErrorDTO errorDTO = new ErrorDTO(
                 webRequest.getDescription(false),
                 HttpStatus.BAD_REQUEST,
                 exception.getMessage(),
                 LocalDateTime.now()
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IncorrectValueException.class)
-    public ResponseEntity<ErrorResponse> handleIncorrectValueException(
+    public ResponseEntity<ErrorDTO> handleIncorrectValueException(
             IncorrectValueException exception, WebRequest webRequest) {
 
-        ErrorResponse errorResponse = new ErrorResponse(
+        ErrorDTO errorDTO = new ErrorDTO(
                 webRequest.getDescription(false),
                 HttpStatus.BAD_REQUEST,
                 exception.getMessage(),
                 LocalDateTime.now()
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(RoleUnmathcedException.class)
-    public ResponseEntity<ErrorResponse> handleRoleUnmathcedException(
+    public ResponseEntity<ErrorDTO> handleRoleUnmathcedException(
             RoleUnmathcedException exception, WebRequest webRequest) {
 
-        ErrorResponse errorResponse = new ErrorResponse(
+        ErrorDTO errorDTO = new ErrorDTO(
                 webRequest.getDescription(false),
                 HttpStatus.FORBIDDEN,
                 exception.getMessage(),
                 LocalDateTime.now()
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(errorDTO, HttpStatus.FORBIDDEN);
     }
 }

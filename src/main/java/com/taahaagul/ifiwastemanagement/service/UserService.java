@@ -7,12 +7,10 @@ import com.taahaagul.ifiwastemanagement.entity.User;
 import com.taahaagul.ifiwastemanagement.exception.IncorrectValueException;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.exception.RoleUnmathcedException;
-import com.taahaagul.ifiwastemanagement.mapper.UserDTOMapper;
+import com.taahaagul.ifiwastemanagement.mapper.UserMapper;
 import com.taahaagul.ifiwastemanagement.repository.CarRepository;
 import com.taahaagul.ifiwastemanagement.repository.UserRepository;
-import com.taahaagul.ifiwastemanagement.request.UserChangePaswRequest;
-import com.taahaagul.ifiwastemanagement.request.UserUpdateRequest;
-import com.taahaagul.ifiwastemanagement.response.UserResponse;
+import com.taahaagul.ifiwastemanagement.dto.ChangePasswordDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,32 +25,32 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final UserDTOMapper userDTOMapper;
+    private final UserMapper userMapper;
     private final AuthenticationService authenticationService;
     private final PasswordEncoder passwordEncoder;
     private final CarRepository carRepository;
 
     public UserDTO getCurrentUser() {
-        return userDTOMapper.apply(authenticationService.getCurrentUser());
+        return userMapper.mapToUserDTO(authenticationService.getCurrentUser());
     }
 
     @Transactional(readOnly = true)
     public List<UserDTO> getAllUsers() {
         List<User> list = userRepository.findAll();
         return list.stream()
-                .map(userDTOMapper)
+                .map(userMapper::mapToUserDTO)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public UserResponse getAnyUser(Long userId) {
+    public UserDTO getAnyUser(Long userId) {
         User foundUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId.toString()));;
 
-        return new UserResponse(foundUser);
+        return userMapper.mapToUserDTO(foundUser);
     }
 
-    public void changePassword(UserChangePaswRequest request) {
+    public void changePassword(ChangePasswordDTO request) {
         User user = authenticationService.getCurrentUser();
         if(passwordEncoder.matches(request.getOldPasw(), user.getPassword())) {
             user.setPassword(passwordEncoder.encode(request.getNewPasw()));
@@ -61,20 +59,17 @@ public class UserService {
             throw new IncorrectValueException("Old Password is incorrect!");
     }
 
-    public UserResponse updateUser(Long userId, UserUpdateRequest request) {
-        User foundUser = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId.toString()));
+    public UserDTO updateUser(UserDTO userDTO) {
+        User foundUser = userRepository.findById(userDTO.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userDTO.getId().toString()));
 
         if(foundUser.getRole().equals(Role.SUPER_ADMIN)) {
             throw new RoleUnmathcedException(foundUser.getRole(), "Untouchable!");
         }
 
-        foundUser.setFirstName(request.getFirstName());
-        foundUser.setLastName(request.getLastName());
-        foundUser.setUserName(request.getUserName());
-        foundUser.setEmail(request.getEmail());
+        userMapper.mapToUser(userDTO, foundUser);
 
-        return new UserResponse(userRepository.save(foundUser));
+        return userMapper.mapToUserDTO(userRepository.save(foundUser));
     }
 
     public void deleteUser(Long userId) {

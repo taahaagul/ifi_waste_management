@@ -7,10 +7,10 @@ import com.taahaagul.ifiwastemanagement.exception.IncorrectValueException;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.repository.UserRepository;
 import com.taahaagul.ifiwastemanagement.repository.VerificationTokenRepository;
-import com.taahaagul.ifiwastemanagement.request.ForgetPaswRequest;
-import com.taahaagul.ifiwastemanagement.request.LoginRequest;
-import com.taahaagul.ifiwastemanagement.request.RegisterRequest;
-import com.taahaagul.ifiwastemanagement.response.AuthenticationResponse;
+import com.taahaagul.ifiwastemanagement.dto.ForgetPasswordDTO;
+import com.taahaagul.ifiwastemanagement.dto.LoginDTO;
+import com.taahaagul.ifiwastemanagement.dto.RegisterDTO;
+import com.taahaagul.ifiwastemanagement.dto.AuthenticationDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,7 @@ public class AuthenticationService {
     private final VerificationTokenRepository verificationTokenRepository;
     private final MailService mailService;
 
-    public void register(RegisterRequest request) {
+    public void register(RegisterDTO request) {
         Optional<User> existingUserName = userRepository.findByUserName(request.getUserName());
         if(existingUserName.isPresent())
             throw new IncorrectValueException("Username already exist!");
@@ -69,7 +69,7 @@ public class AuthenticationService {
                 "Password : " + request.getPassword()));
     }
 
-    public AuthenticationResponse authenticate(LoginRequest request) {
+    public AuthenticationDTO authenticate(LoginDTO request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -80,7 +80,7 @@ public class AuthenticationService {
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
-        return AuthenticationResponse.builder()
+        return AuthenticationDTO.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();
@@ -132,7 +132,7 @@ public class AuthenticationService {
                     .orElseThrow();
             if (jwtService.isTokenValid(refreshToken, user)) {
                 var accessToken = jwtService.generateToken(user);
-                var authResponse = AuthenticationResponse.builder()
+                var authResponse = AuthenticationDTO.builder()
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
                         .build();
@@ -157,17 +157,17 @@ public class AuthenticationService {
                 existingUser.getEmail(), "Please copy this token = " + token));
     }
 
-    public void forgetChangePasw(ForgetPaswRequest forgetPaswRequest) {
+    public void forgetChangePasw(ForgetPasswordDTO forgetPasswordDTO) {
 
         VerificationToken verificationToken = verificationTokenRepository
-                .findByToken(forgetPaswRequest.getToken())
-                .orElseThrow(() -> new ResourceNotFoundException("VerificationToken", "Token", forgetPaswRequest.getToken()));
+                .findByToken(forgetPasswordDTO.getToken())
+                .orElseThrow(() -> new ResourceNotFoundException("VerificationToken", "Token", forgetPasswordDTO.getToken()));
 
         Date now = new Date();
 
         if(verificationToken.getExpirationTime().after(now)) {
             User user = verificationToken.getUser();
-            user.setPassword(passwordEncoder.encode(forgetPaswRequest.getNewPasw()));
+            user.setPassword(passwordEncoder.encode(forgetPasswordDTO.getNewPasw()));
             userRepository.save(user);
         } else {
             throw new IncorrectValueException("Token is expired!");

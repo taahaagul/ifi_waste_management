@@ -1,14 +1,16 @@
 package com.taahaagul.ifiwastemanagement.service;
 
 import com.taahaagul.ifiwastemanagement.dto.CarDTO;
+import com.taahaagul.ifiwastemanagement.dto.UserDTO;
 import com.taahaagul.ifiwastemanagement.entity.Car;
+import com.taahaagul.ifiwastemanagement.entity.User;
 import com.taahaagul.ifiwastemanagement.entity.Zone;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
 import com.taahaagul.ifiwastemanagement.mapper.CarMapper;
+import com.taahaagul.ifiwastemanagement.mapper.UserMapper;
 import com.taahaagul.ifiwastemanagement.repository.CarRepository;
 import com.taahaagul.ifiwastemanagement.repository.UserRepository;
 import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
-import com.taahaagul.ifiwastemanagement.response.UserResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,6 +25,7 @@ public class CarService {
 
     private final ZoneRepository zoneRepository;
     private final CarMapper carMapper;
+    private final UserMapper userMapper;
     private final CarRepository carRepository;
     private final UserRepository userRepository;
 
@@ -74,13 +77,13 @@ public class CarService {
         carRepository.delete(foundedCar);
     }
 
-    public List<UserResponse> getCarUsers(Long carId) {
+    public List<UserDTO> getCarUsers(Long carId) {
         Car foundedCar = carRepository.findById(carId)
                 .orElseThrow(() -> new ResourceNotFoundException("Car", "carId", carId.toString()));
+        List<User> users = foundedCar.getUsers();
 
-        return foundedCar.getUsers()
-                .stream()
-                .map(UserResponse::new)
+        return users.stream()
+                .map(userMapper::mapToUserDTO)
                 .toList();
     }
 

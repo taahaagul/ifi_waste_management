@@ -1,8 +1,8 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
-import com.taahaagul.ifiwastemanagement.request.ForgetPaswRequest;
-import com.taahaagul.ifiwastemanagement.request.LoginRequest;
-import com.taahaagul.ifiwastemanagement.response.AuthenticationResponse;
+import com.taahaagul.ifiwastemanagement.dto.ForgetPasswordDTO;
+import com.taahaagul.ifiwastemanagement.dto.LoginDTO;
+import com.taahaagul.ifiwastemanagement.dto.AuthenticationDTO;
 import com.taahaagul.ifiwastemanagement.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,8 +25,8 @@ public class AuthenticationController {
     private final AuthenticationService service;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> authenticate(
-            @Valid @RequestBody LoginRequest request
+    public ResponseEntity<AuthenticationDTO> authenticate(
+            @Valid @RequestBody LoginDTO request
     ) {
         return ResponseEntity.ok(service.authenticate(request));
     }
@@ -47,8 +47,8 @@ public class AuthenticationController {
 
     @PutMapping("/forgetMyPassword/newPasw")
     public ResponseEntity<String> forgetChangePasword(
-            @Valid @RequestBody ForgetPaswRequest forgetPaswRequest) {
-        service.forgetChangePasw(forgetPaswRequest);
+            @Valid @RequestBody ForgetPasswordDTO forgetPasswordDTO) {
+        service.forgetChangePasw(forgetPasswordDTO);
         return new ResponseEntity<>("New Password is determined", OK);
     }
 }

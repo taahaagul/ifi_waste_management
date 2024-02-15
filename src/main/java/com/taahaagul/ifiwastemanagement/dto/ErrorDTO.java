@@ -1,4 +1,4 @@
-package com.taahaagul.ifiwastemanagement.response;
+package com.taahaagul.ifiwastemanagement.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
-public class ErrorResponse {
+public class ErrorDTO {
 
     private String apiPath;
     private HttpStatus errorCode;

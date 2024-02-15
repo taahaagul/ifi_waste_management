@@ -1,10 +1,10 @@
-package com.taahaagul.ifiwastemanagement.request;
+package com.taahaagul.ifiwastemanagement.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class UserChangePaswRequest {
+public class ChangePasswordDTO {
 
     @NotBlank(message = "Old password can not be blank")
     private String oldPasw;

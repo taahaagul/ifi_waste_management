@@ -1,7 +1,7 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.dto.CarDTO;
-import com.taahaagul.ifiwastemanagement.response.UserResponse;
+import com.taahaagul.ifiwastemanagement.dto.UserDTO;
 import com.taahaagul.ifiwastemanagement.service.CarService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -77,7 +77,7 @@ public class CarController {
     }
 
     @GetMapping("/{carId}/users")
-    public ResponseEntity<List<UserResponse>> getCarUsers(
+    public ResponseEntity<List<UserDTO>> getCarUsers(
             @PathVariable Long carId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(carService.getCarUsers(carId));
