@@ -1,9 +1,7 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
-import com.taahaagul.ifiwastemanagement.request.BranchRequest;
-import com.taahaagul.ifiwastemanagement.request.BranchUpdateRequest;
-import com.taahaagul.ifiwastemanagement.response.BranchResponse;
-import com.taahaagul.ifiwastemanagement.response.ZoneResponse;
+import com.taahaagul.ifiwastemanagement.dto.BranchDTO;
+import com.taahaagul.ifiwastemanagement.dto.ZoneDTO;
 import com.taahaagul.ifiwastemanagement.service.BranchService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,40 +22,39 @@ public class BranchController {
     private final BranchService branchService;
 
     @GetMapping("/all")
-    public ResponseEntity<Page<BranchResponse>> getAllBranch(
+    public ResponseEntity<Page<BranchDTO>> getAllBranch(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<BranchResponse> branchPage = branchService.getAllBranch(pageable);
+        Page<BranchDTO> branchPage = branchService.getAllBranch(pageable);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(branchPage);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BranchResponse> getBranchById(
+    public ResponseEntity<BranchDTO> getBranchById(
             @PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(branchService.getBranchById(id));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<BranchResponse> createBranch(
-            @Valid @RequestBody BranchRequest branchRequest) {
+    public ResponseEntity<BranchDTO> createBranch(
+            @Valid @RequestBody BranchDTO branchDTO) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(branchService.createBranch(branchRequest));
+                .body(branchService.createBranch(branchDTO));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<BranchResponse> updateBranch(
-            @PathVariable Long id,
-            @Valid @RequestBody BranchUpdateRequest branchUpdateRequest) {
+    @PutMapping("/update")
+    public ResponseEntity<BranchDTO> updateBranch(
+            @Valid @RequestBody BranchDTO branchDTO) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(branchService.updateBranch(id, branchUpdateRequest));
+                .body(branchService.updateBranch(branchDTO));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteBranch(
             @PathVariable Long id) {
         branchService.deleteBranch(id);
@@ -66,7 +63,7 @@ public class BranchController {
     }
 
     @PutMapping("/{branchId}/district/{districtId}")
-    public ResponseEntity<BranchResponse> assignBranchZone(
+    public ResponseEntity<BranchDTO> assignBranchZone(
             @PathVariable Long branchId,
             @PathVariable Long districtId) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -74,7 +71,7 @@ public class BranchController {
     }
 
     @GetMapping("/{branchId}/zones")
-    public ResponseEntity<Page<ZoneResponse>> getBranchZones(
+    public ResponseEntity<Page<ZoneDTO>> getBranchZones(
             @PathVariable Long branchId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
