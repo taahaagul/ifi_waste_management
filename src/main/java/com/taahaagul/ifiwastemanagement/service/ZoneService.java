@@ -1,17 +1,21 @@
 package com.taahaagul.ifiwastemanagement.service;
 
+import com.taahaagul.ifiwastemanagement.dto.CarDTO;
+import com.taahaagul.ifiwastemanagement.dto.CustomerDTO;
+import com.taahaagul.ifiwastemanagement.dto.ZoneDTO;
 import com.taahaagul.ifiwastemanagement.entity.Branch;
+import com.taahaagul.ifiwastemanagement.entity.Car;
+import com.taahaagul.ifiwastemanagement.entity.Customer;
 import com.taahaagul.ifiwastemanagement.entity.Zone;
+import com.taahaagul.ifiwastemanagement.exception.IllegalOperationException;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
+import com.taahaagul.ifiwastemanagement.mapper.CarMapper;
+import com.taahaagul.ifiwastemanagement.mapper.CustomerMapper;
+import com.taahaagul.ifiwastemanagement.mapper.ZoneMapper;
 import com.taahaagul.ifiwastemanagement.repository.BranchRepository;
 import com.taahaagul.ifiwastemanagement.repository.CarRepository;
 import com.taahaagul.ifiwastemanagement.repository.CustomerRepository;
 import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
-import com.taahaagul.ifiwastemanagement.request.ZoneRequest;
-import com.taahaagul.ifiwastemanagement.request.ZoneUpdateRequest;
-import com.taahaagul.ifiwastemanagement.response.CarResponse;
-import com.taahaagul.ifiwastemanagement.response.CustomerResponse;
-import com.taahaagul.ifiwastemanagement.response.ZoneResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,27 +30,28 @@ import java.util.stream.Collectors;
 public class ZoneService {
 
     private final ZoneRepository zoneRepository;
+    private final ZoneMapper zoneMapper;
+    private final CarMapper carMapper;
+    private final CustomerMapper customerMapper;
     private final BranchRepository branchRepository;
     private final CustomerRepository customerRepository;
     private final CarRepository carRepository;
 
-    public ZoneResponse createZone(ZoneRequest zoneRequest) {
-        Branch foundedBranch = branchRepository.findById(zoneRequest.getBranchId())
-                .orElseThrow(() -> new ResourceNotFoundException("Zone", "BranchId", zoneRequest.getBranchId().toString()));
-
-        Zone zone = Zone.builder()
-                .zoneName(zoneRequest.getZoneName())
-                .zoneCode(zoneRequest.getZoneCode())
-                .branch(foundedBranch)
-                .build();
-
-        return new ZoneResponse(zoneRepository.save(zone));
+    public ZoneDTO createZone(ZoneDTO zoneDTO) {
+        if (zoneDTO.getBranchId() == null) {
+            throw new IllegalOperationException("BranchId cannot be null");
+        }
+        Branch foundedBranch = branchRepository.findById(zoneDTO.getBranchId())
+                .orElseThrow(() -> new ResourceNotFoundException("Branch", "id", zoneDTO.getBranchId().toString()));
+        Zone savedZone = zoneMapper.mapToZone(zoneDTO, new Zone());
+        savedZone.setBranch(foundedBranch);
+        return zoneMapper.mapToZoneDTO(zoneRepository.save(savedZone));
     }
 
-    public Page<ZoneResponse> getAllZone(Pageable pageable) {
+    public Page<ZoneDTO> getAllZone(Pageable pageable) {
         Page<Zone> zones = zoneRepository.findAll(pageable);
 
-        return zones.map(ZoneResponse::new);
+        return zones.map(zoneMapper::mapToZoneDTO);
     }
 
     @Transactional
@@ -59,16 +64,15 @@ public class ZoneService {
         zoneRepository.delete(foundedZone);
     }
 
-    public ZoneResponse updateZone(Long id, ZoneUpdateRequest request) {
-        Zone foundedZone = zoneRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Zone", "id", id.toString()));
-        foundedZone.setZoneCode(request.getZoneCode());
-        foundedZone.setZoneName(request.getZoneName());
+    public ZoneDTO updateZone(ZoneDTO zoneDTO) {
+        Zone foundedZone = zoneRepository.findById(zoneDTO.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Zone", "id", zoneDTO.getId().toString()));
 
-        return new ZoneResponse(zoneRepository.save(foundedZone));
+        zoneMapper.mapToZone(zoneDTO, foundedZone);
+        return zoneMapper.mapToZoneDTO(zoneRepository.save(foundedZone));
     }
 
-    public ZoneResponse assignZoneBranch(Long zoneId, Long branchId) {
+    public void assignZoneBranch(Long zoneId, Long branchId) {
         Zone foundedZone = zoneRepository.findById(zoneId)
                 .orElseThrow(() -> new ResourceNotFoundException("Zone", "id", zoneId.toString()));
 
@@ -76,26 +80,26 @@ public class ZoneService {
                 .orElseThrow(() -> new ResourceNotFoundException("Branch", "id", branchId.toString()));
 
         foundedZone.setBranch(foundedBranch);
-        return new ZoneResponse(zoneRepository.save(foundedZone));
+        zoneRepository.save(foundedZone);
     }
 
-    public ZoneResponse getZoneById(Long id) {
+    public ZoneDTO getZoneById(Long id) {
         Zone foundedZone = zoneRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Zone", "id", id.toString()));
 
-        return new ZoneResponse(foundedZone);
+        return zoneMapper.mapToZoneDTO(foundedZone);
     }
 
-    public Page<CustomerResponse> getZoneCustomers(Long zoneId, Pageable pageable) {
+    public Page<CustomerDTO> getZoneCustomers(Long zoneId, Pageable pageable) {
+        Page<Customer> customers = customerRepository.findByZoneId(zoneId, pageable);
 
-        return customerRepository.findByZoneId(zoneId, pageable)
-                .map(CustomerResponse::new);
+        return customers.map(customerMapper::mapToCustomerDTO);
     }
 
-    public List<CarResponse> getZoneCars(Long zoneId) {
-        return carRepository.findByZoneId(zoneId)
-                .stream()
-                .map(CarResponse::new)
+    public List<CarDTO> getZoneCars(Long zoneId) {
+        List<Car> cars = carRepository.findByZoneId(zoneId);
+
+        return cars.stream().map(carMapper::mapToCarDTO)
                 .collect(Collectors.toList());
     }
 }
