@@ -1,16 +1,17 @@
 package com.taahaagul.ifiwastemanagement.service;
 
+import com.taahaagul.ifiwastemanagement.dto.CityDTO;
+import com.taahaagul.ifiwastemanagement.dto.DistrictDTO;
 import com.taahaagul.ifiwastemanagement.entity.City;
 import com.taahaagul.ifiwastemanagement.entity.Country;
+import com.taahaagul.ifiwastemanagement.entity.District;
 import com.taahaagul.ifiwastemanagement.exception.IllegalOperationException;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
+import com.taahaagul.ifiwastemanagement.mapper.CityMapper;
+import com.taahaagul.ifiwastemanagement.mapper.DistrictMapper;
 import com.taahaagul.ifiwastemanagement.repository.CityRepository;
 import com.taahaagul.ifiwastemanagement.repository.CountryRepository;
 import com.taahaagul.ifiwastemanagement.repository.DistrictRepository;
-import com.taahaagul.ifiwastemanagement.request.CityRequest;
-import com.taahaagul.ifiwastemanagement.request.CityUpdateRequest;
-import com.taahaagul.ifiwastemanagement.response.CityResponse;
-import com.taahaagul.ifiwastemanagement.response.DistrictResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,25 +27,27 @@ public class CityService {
     private final CountryRepository countryRepository;
     private final CityRepository cityRepository;
     private final DistrictRepository districtRepository;
+    private final CityMapper cityMapper;
+    private final DistrictMapper districtMapper;
 
-    public CityResponse createCity(CityRequest request) {
-        Country foundedCountry = countryRepository.findById(request.getCountryId())
-                .orElseThrow(() -> new ResourceNotFoundException("City", "countryId", request.getCountryId().toString()));
+    public CityDTO createCity(CityDTO cityDTO) {
+        if (cityDTO.getCountryId() == null) {
+            throw new IllegalOperationException("CountryId cannot be null");
+        }
+        Country foundedCountry = countryRepository.findById(cityDTO.getCountryId())
+                .orElseThrow(() -> new ResourceNotFoundException("City", "countryId", cityDTO.getCountryId().toString()));
 
-        City city = City.builder()
-                .cityName(request.getCityName())
-                .cityCode(request.getCityCode())
-                .country(foundedCountry)
-                .build();
+        City savedCity = cityMapper.mapToCity(cityDTO, new City());
+        savedCity.setCountry(foundedCountry);
 
-        return new CityResponse(cityRepository.save(city));
+        return cityMapper.mapToCityDTO(cityRepository.save(savedCity));
     }
 
-    public List<CityResponse> getAllCity() {
+    public List<CityDTO> getAllCity() {
         List<City> cities = cityRepository.findAll();
 
         return cities.stream()
-                .map(city -> new CityResponse(city))
+                .map(cityMapper::mapToCityDTO)
                 .collect(Collectors.toList());
     }
 
@@ -59,38 +62,34 @@ public class CityService {
         cityRepository.delete(foundedCity);
     }
 
-    public CityResponse updateCity(Long cityId, CityUpdateRequest request) {
-        City foundedCity = cityRepository.findById(cityId)
-                .orElseThrow(() -> new ResourceNotFoundException("City", "id", cityId.toString()));
+    public CityDTO updateCity(CityDTO cityDTO) {
+        City foundedCity = cityRepository.findById(cityDTO.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("City", "id", cityDTO.getId().toString()));
 
-        foundedCity.setCityName(request.getCityName());
-        foundedCity.setCityCode(request.getCityCode());
-
-        return new CityResponse(cityRepository.save(foundedCity));
+        cityMapper.mapToCity(cityDTO, foundedCity);
+        return cityMapper.mapToCityDTO(cityRepository.save(foundedCity));
     }
 
-    public CityResponse assignCityCountry(Long cityId, Long countryId) {
+    public CityDTO assignCityCountry(Long cityId, Long countryId) {
         City foundedCity = cityRepository.findById(cityId)
                 .orElseThrow(() -> new ResourceNotFoundException("City", "id", cityId.toString()));
-
         Country foundedCountry = countryRepository.findById(countryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Country", "id", countryId.toString()));
 
         foundedCity.setCountry(foundedCountry);
-
-        return new CityResponse(cityRepository.save(foundedCity));
+        return cityMapper.mapToCityDTO(cityRepository.save(foundedCity));
     }
 
-    public CityResponse getCityById(Long id) {
+    public CityDTO getCityById(Long id) {
         City foundedCity = cityRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("City", "id", id.toString()));
 
-        return new CityResponse(foundedCity);
+        return cityMapper.mapToCityDTO(foundedCity);
     }
 
-    public Page<DistrictResponse> getCityDistricts(Long cityId, Pageable pageable) {
+    public Page<DistrictDTO> getCityDistricts(Long cityId, Pageable pageable) {
+        Page<District> districts = districtRepository.findByCityId(cityId, pageable);
 
-        return districtRepository.findByCityId(cityId, pageable)
-                .map(DistrictResponse::new);
+        return districts.map(districtMapper::mapToDistrictDTO);
     }
 }

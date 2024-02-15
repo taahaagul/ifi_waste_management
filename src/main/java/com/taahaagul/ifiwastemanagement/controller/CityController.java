@@ -1,9 +1,7 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
-import com.taahaagul.ifiwastemanagement.request.CityRequest;
-import com.taahaagul.ifiwastemanagement.request.CityUpdateRequest;
-import com.taahaagul.ifiwastemanagement.response.CityResponse;
-import com.taahaagul.ifiwastemanagement.response.DistrictResponse;
+import com.taahaagul.ifiwastemanagement.dto.CityDTO;
+import com.taahaagul.ifiwastemanagement.dto.DistrictDTO;
 import com.taahaagul.ifiwastemanagement.service.CityService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,31 +24,30 @@ public class CityController {
     private final CityService cityService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<CityResponse>> getAllCity() {
+    public ResponseEntity<List<CityDTO>> getAllCity() {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(cityService.getAllCity());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CityResponse> getCityById(@PathVariable("id") Long id) {
+    public ResponseEntity<CityDTO> getCityById(@PathVariable("id") Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(cityService.getCityById(id));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CityResponse> createCity(
-            @Valid @RequestBody CityRequest request) {
+    public ResponseEntity<CityDTO> createCity(
+            @Valid @RequestBody CityDTO cityDTO) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(cityService.createCity(request));
+                .body(cityService.createCity(cityDTO));
     }
 
-    @PutMapping("/{cityId}")
-    public ResponseEntity<CityResponse> updateCity(
-            @PathVariable("cityId") Long cityId,
-            @Valid @RequestBody CityUpdateRequest request) {
+    @PutMapping("/update")
+    public ResponseEntity<CityDTO> updateCity(
+            @Valid @RequestBody CityDTO cityDTO) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(cityService.updateCity(cityId, request));
+                .body(cityService.updateCity(cityDTO));
     }
 
     @DeleteMapping("/{id}")
@@ -61,7 +58,7 @@ public class CityController {
     }
 
     @PutMapping("/{cityId}/country/{countryId}")
-    public ResponseEntity<CityResponse> assignCityCountry(
+    public ResponseEntity<CityDTO> assignCityCountry(
             @PathVariable Long cityId,
             @PathVariable Long countryId) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -69,7 +66,7 @@ public class CityController {
     }
 
     @GetMapping("/{cityId}/districts")
-    public ResponseEntity<Page<DistrictResponse>> getCityDistricts(
+    public ResponseEntity<Page<DistrictDTO>> getCityDistricts(
             @PathVariable Long cityId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
