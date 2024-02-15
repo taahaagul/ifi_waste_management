@@ -1,9 +1,7 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
-import com.taahaagul.ifiwastemanagement.request.DistrictRequest;
-import com.taahaagul.ifiwastemanagement.request.DistrictUpdateRequest;
-import com.taahaagul.ifiwastemanagement.response.BranchResponse;
-import com.taahaagul.ifiwastemanagement.response.DistrictResponse;
+import com.taahaagul.ifiwastemanagement.dto.BranchDTO;
+import com.taahaagul.ifiwastemanagement.dto.DistrictDTO;
 import com.taahaagul.ifiwastemanagement.service.DistrictService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,31 +24,30 @@ public class DistrictController {
     private final DistrictService districtService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<DistrictResponse>> getAllDistrict() {
+    public ResponseEntity<List<DistrictDTO>> getAllDistrict() {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(districtService.getAllDistrict());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DistrictResponse> getDistrictById(
+    public ResponseEntity<DistrictDTO> getDistrictById(
             @PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(districtService.getDistrictById(id));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<DistrictResponse> createDistrict(
-            @Valid @RequestBody DistrictRequest districtRequest) {
+    public ResponseEntity<DistrictDTO> createDistrict(
+            @Valid @RequestBody DistrictDTO districtDTO) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(districtService.createDistrict(districtRequest));
+                .body(districtService.createDistrict(districtDTO));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<DistrictResponse> updateDistrict(
-            @PathVariable Long id,
-            @Valid @RequestBody DistrictUpdateRequest districtUpdateRequest) {
+    @PutMapping("/update")
+    public ResponseEntity<DistrictDTO> updateDistrict(
+            @Valid @RequestBody DistrictDTO districtDTO) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(districtService.updateDistrict(id, districtUpdateRequest));
+                .body(districtService.updateDistrict(districtDTO));
     }
 
     @DeleteMapping("/{id}")
@@ -63,7 +60,7 @@ public class DistrictController {
     }
 
     @PutMapping("/{districtId}/city/{cityId}")
-    public ResponseEntity<DistrictResponse> assignDistrictCity(
+    public ResponseEntity<DistrictDTO> assignDistrictCity(
             @PathVariable Long districtId,
             @PathVariable Long cityId) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -71,7 +68,7 @@ public class DistrictController {
     }
 
     @GetMapping("/{districtId}/branches")
-    public ResponseEntity<Page<BranchResponse>> getDistrictBranches(
+    public ResponseEntity<Page<BranchDTO>> getDistrictBranches(
             @PathVariable Long districtId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {

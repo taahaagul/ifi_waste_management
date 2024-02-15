@@ -1,16 +1,17 @@
 package com.taahaagul.ifiwastemanagement.service;
 
+import com.taahaagul.ifiwastemanagement.dto.BranchDTO;
+import com.taahaagul.ifiwastemanagement.dto.DistrictDTO;
+import com.taahaagul.ifiwastemanagement.entity.Branch;
 import com.taahaagul.ifiwastemanagement.entity.City;
 import com.taahaagul.ifiwastemanagement.entity.District;
 import com.taahaagul.ifiwastemanagement.exception.IllegalOperationException;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
+import com.taahaagul.ifiwastemanagement.mapper.BranchMapper;
+import com.taahaagul.ifiwastemanagement.mapper.DistrictMapper;
 import com.taahaagul.ifiwastemanagement.repository.BranchRepository;
 import com.taahaagul.ifiwastemanagement.repository.CityRepository;
 import com.taahaagul.ifiwastemanagement.repository.DistrictRepository;
-import com.taahaagul.ifiwastemanagement.request.DistrictRequest;
-import com.taahaagul.ifiwastemanagement.request.DistrictUpdateRequest;
-import com.taahaagul.ifiwastemanagement.response.BranchResponse;
-import com.taahaagul.ifiwastemanagement.response.DistrictResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,27 +25,27 @@ import java.util.stream.Collectors;
 public class DistrictService {
 
     private final DistrictRepository districtRepository;
+    private final DistrictMapper districtMapper;
     private final CityRepository cityRepository;
     private final BranchRepository branchRepository;
+    private final BranchMapper branchMapper;
 
-    public DistrictResponse createDistrict(DistrictRequest districtRequest) {
-        City foundedCity = cityRepository.findById(districtRequest.getCityId())
-                .orElseThrow(() -> new ResourceNotFoundException("District", "cityId", districtRequest.getCityId().toString()));
+    public DistrictDTO createDistrict(DistrictDTO districtDTO) {
+        if (districtDTO.getCityId() == null) {
+            throw new IllegalOperationException("CityId cannot be null");
+        }
+        City foundedCity = cityRepository.findById(districtDTO.getCityId())
+                .orElseThrow(() -> new ResourceNotFoundException("District", "cityId", districtDTO.getCityId().toString()));
+        District savedDistrict = districtMapper.mapToDistrict(districtDTO, new District());
 
-        District district = District.builder()
-                .districtName(districtRequest.getDistrictName())
-                .districtCode(districtRequest.getDistrictCode())
-                .city(foundedCity)
-                .build();
-
-        return new DistrictResponse(districtRepository.save(district));
+        return districtMapper.mapToDistrictDTO(districtRepository.save(savedDistrict));
     }
 
-    public List<DistrictResponse> getAllDistrict() {
+    public List<DistrictDTO> getAllDistrict() {
         List<District> districts = districtRepository.findAll();
 
         return districts.stream()
-                .map(district -> new DistrictResponse(district))
+                .map(districtMapper::mapToDistrictDTO)
                 .collect(Collectors.toList());
     }
 
@@ -59,39 +60,35 @@ public class DistrictService {
         districtRepository.delete(foundedDistrict);
     }
 
-    public DistrictResponse updateDistrict(Long id, DistrictUpdateRequest districtUpdateRequest) {
-        District foundedDistrict = districtRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("District", "id", id.toString()));
+    public DistrictDTO updateDistrict(DistrictDTO districtDTO) {
+        District foundedDistrict = districtRepository.findById(districtDTO.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("District", "id", districtDTO.getId().toString()));
 
-        foundedDistrict.setDistrictName(districtUpdateRequest.getDistrictName());
-        foundedDistrict.setDistrictCode(districtUpdateRequest.getDistrictCode());
-
-        return new DistrictResponse(districtRepository.save(foundedDistrict));
+        districtMapper.mapToDistrict(districtDTO, foundedDistrict);
+        return districtMapper.mapToDistrictDTO(districtRepository.save(foundedDistrict));
     }
 
-    public DistrictResponse assignDistrictCity(Long districtId, Long cityId) {
+    public DistrictDTO assignDistrictCity(Long districtId, Long cityId) {
         District foundedDistrict = districtRepository.findById(districtId)
                 .orElseThrow(() -> new ResourceNotFoundException("District", "id", districtId.toString()));
-
         City foundedCity = cityRepository.findById(cityId)
                 .orElseThrow(() -> new ResourceNotFoundException("City", "id", cityId.toString()));
 
         foundedDistrict.setCity(foundedCity);
-
-        return new DistrictResponse(districtRepository.save(foundedDistrict));
+        return districtMapper.mapToDistrictDTO(districtRepository.save(foundedDistrict));
     }
 
-    public DistrictResponse getDistrictById(Long id) {
+    public DistrictDTO getDistrictById(Long id) {
         District foundedDistrict = districtRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("District", "id", id.toString()));
 
-        return new DistrictResponse(foundedDistrict);
+        return districtMapper.mapToDistrictDTO(foundedDistrict);
     }
 
 
-    public Page<BranchResponse> getDistrictBranches(Long districtId, Pageable pageable) {
+    public Page<BranchDTO> getDistrictBranches(Long districtId, Pageable pageable) {
+        Page<Branch> branches = branchRepository.findByDistrictId(districtId, pageable);
 
-        return branchRepository.findByDistrictId(districtId, pageable)
-                .map(BranchResponse::new);
+        return branches.map(branchMapper::mapToBranchDTO);
     }
 }
