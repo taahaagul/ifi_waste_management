@@ -1,9 +1,7 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
-import com.taahaagul.ifiwastemanagement.request.CountryRequest;
-import com.taahaagul.ifiwastemanagement.request.CountryUpdateRequest;
-import com.taahaagul.ifiwastemanagement.response.CityResponse;
-import com.taahaagul.ifiwastemanagement.response.CountryResponse;
+import com.taahaagul.ifiwastemanagement.dto.CityDTO;
+import com.taahaagul.ifiwastemanagement.dto.CountryDTO;
 import com.taahaagul.ifiwastemanagement.service.CountryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,32 +24,31 @@ public class CountryController {
     private final CountryService countryService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<CountryResponse>> getAllCountry() {
+    public ResponseEntity<List<CountryDTO>> getAllCountry() {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(countryService.getAllCountry());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CountryResponse> getCountryById(@PathVariable Long id) {
+    public ResponseEntity<CountryDTO> getCountryById(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(countryService.getCountryById(id));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CountryResponse> createCountry(
-            @Valid @RequestBody CountryRequest countryRequest) {
+    public ResponseEntity<CountryDTO> createCountry(
+            @Valid @RequestBody CountryDTO countryDTO) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(countryService.createCountry(countryRequest));
+                .body(countryService.createCountry(countryDTO));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CountryResponse> updateCountry(
-            @PathVariable Long id,
-            @Valid @RequestBody CountryUpdateRequest countryUpdateRequest) {
+    @PutMapping("/update")
+    public ResponseEntity<CountryDTO> updateCountry(
+            @Valid @RequestBody CountryDTO countryDTO) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(countryService.updateCountry(id, countryUpdateRequest));
+                .body(countryService.updateCountry(countryDTO));
     }
 
     @DeleteMapping("/{id}")
@@ -62,7 +59,7 @@ public class CountryController {
     }
 
     @GetMapping("/{countryId}/cities")
-    public ResponseEntity<Page<CityResponse>> getCitiesByCountryId(
+    public ResponseEntity<Page<CityDTO>> getCitiesByCountryId(
             @PathVariable Long countryId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {

@@ -1,14 +1,15 @@
 package com.taahaagul.ifiwastemanagement.service;
 
+import com.taahaagul.ifiwastemanagement.dto.CityDTO;
+import com.taahaagul.ifiwastemanagement.dto.CountryDTO;
+import com.taahaagul.ifiwastemanagement.entity.City;
 import com.taahaagul.ifiwastemanagement.entity.Country;
 import com.taahaagul.ifiwastemanagement.exception.IllegalOperationException;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
+import com.taahaagul.ifiwastemanagement.mapper.CityMapper;
+import com.taahaagul.ifiwastemanagement.mapper.CountryMapper;
 import com.taahaagul.ifiwastemanagement.repository.CityRepository;
 import com.taahaagul.ifiwastemanagement.repository.CountryRepository;
-import com.taahaagul.ifiwastemanagement.request.CountryRequest;
-import com.taahaagul.ifiwastemanagement.request.CountryUpdateRequest;
-import com.taahaagul.ifiwastemanagement.response.CityResponse;
-import com.taahaagul.ifiwastemanagement.response.CountryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,23 +24,19 @@ public class CountryService {
 
     private final CountryRepository countryRepository;
     private final CityRepository cityRepository;
+    private final CountryMapper countryMapper;
+    private final CityMapper cityMapper;
 
-    public CountryResponse createCountry(CountryRequest countryRequest) {
-        Country country = Country.builder()
-                .countryName(countryRequest.getCountryName())
-                .counrtyCode(countryRequest.getCountryCode())
-                .build();
-
-        countryRepository.save(country);
-
-        return new CountryResponse(country);
+    public CountryDTO createCountry(CountryDTO countryDTO) {
+        Country savedCountry = countryMapper.mapToCountry(countryDTO, new Country());
+        return countryMapper.mapToCountryDTO(countryRepository.save(savedCountry));
     }
 
-    public List<CountryResponse> getAllCountry() {
+    public List<CountryDTO> getAllCountry() {
         List<Country> countries = countryRepository.findAll();
 
         return countries.stream()
-                .map(country -> new CountryResponse(country))
+                .map(countryMapper::mapToCountryDTO)
                 .collect(Collectors.toList());
     }
 
@@ -54,26 +51,24 @@ public class CountryService {
         countryRepository.delete(foundedCountry);
     }
 
-    public CountryResponse updateCountry(Long id, CountryUpdateRequest countryUpdateRequest) {
+    public CountryDTO updateCountry(CountryDTO countryDTO) {
+        Country foundedCountry = countryRepository.findById(countryDTO.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Country", "id", countryDTO.getId().toString()));
+
+        countryMapper.mapToCountry(countryDTO, foundedCountry);
+        return countryMapper.mapToCountryDTO(countryRepository.save(foundedCountry));
+    }
+
+    public CountryDTO getCountryById(Long id) {
         Country foundedCountry = countryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Country", "id", id.toString()));
 
-        foundedCountry.setCountryName(countryUpdateRequest.getCountryName());
-        foundedCountry.setCounrtyCode(countryUpdateRequest.getCountryCode());
-
-        return new CountryResponse(countryRepository.save(foundedCountry));
+       return countryMapper.mapToCountryDTO(foundedCountry);
     }
 
-    public CountryResponse getCountryById(Long id) {
-        Country foundedCountry = countryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Country", "id", id.toString()));
+    public Page<CityDTO> getCountryCities(Long countryId, Pageable pageable) {
 
-        return new CountryResponse(foundedCountry);
-    }
-
-    public Page<CityResponse> getCountryCities(Long countryId, Pageable pageable) {
-
-        return cityRepository.findByCountryId(countryId, pageable)
-                .map(CityResponse::new);
+        Page<City> cities = cityRepository.findByCountryId(countryId, pageable);
+        return cities.map(cityMapper::mapToCityDTO);
     }
 }

@@ -18,7 +18,7 @@ public class Country extends BaseEntity{
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
     private String countryName;
-    private String counrtyCode;
+    private String countryCode;
 
     @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<City> cities;
