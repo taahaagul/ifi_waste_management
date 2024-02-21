@@ -20,6 +20,9 @@ public class CountryMapper {
     }
 
     public Country mapToCountry(CountryDTO countryDTO, Country country) {
+        if (countryDTO == null) {
+            throw new NullPointerException("CountryDTO is null");
+        }
         country.setCountryName(countryDTO.getCountryName());
         country.setCountryCode(countryDTO.getCountryCode());
         return country;
