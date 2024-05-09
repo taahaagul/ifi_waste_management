@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.taahaagul.ifiwastemanagement.entity.Permission.*;
 
@@ -22,7 +23,8 @@ public enum Role {
                     USER_DELETE,
                     ROLE_READ,
                     ROLE_CHANGE,
-                    ENABLED_CHANGE
+                    ENABLED_CHANGE,
+                    PASSWORD_CHANGE
             )
     ),
 
@@ -47,5 +49,10 @@ public enum Role {
                 .collect(Collectors.toList());
         authorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
         return authorities;
+    }
+
+    public static boolean isValidRole(String roleName) {
+        return Stream.of(values())
+                .anyMatch(role -> role.name().equals(roleName));
     }
 }

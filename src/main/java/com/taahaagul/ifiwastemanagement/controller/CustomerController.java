@@ -1,6 +1,8 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
+import com.taahaagul.ifiwastemanagement.dto.CustomPage;
 import com.taahaagul.ifiwastemanagement.dto.CustomerDTO;
+import com.taahaagul.ifiwastemanagement.dto.RequestDTO;
 import com.taahaagul.ifiwastemanagement.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,14 @@ import org.springframework.web.bind.annotation.*;
 public class CustomerController {
 
     private final CustomerService customerService;
+
+    @PostMapping("/all")
+    public ResponseEntity<Page<CustomerDTO>> getAllCustomers (
+            @RequestBody RequestDTO requestDTO) {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(customerService.getAllCustomers(requestDTO));
+    }
 
     @PostMapping("/create")
     public ResponseEntity<CustomerDTO> createCustomer(
@@ -43,7 +53,6 @@ public class CustomerController {
                 .body("Customer deleted successfully");
     }
 
-
     @PutMapping("/{customerId}/zone/{zoneId}")
     public ResponseEntity<String> assignCustomerZone(
             @PathVariable Long customerId,
@@ -54,17 +63,52 @@ public class CustomerController {
                 .body("Customer zone updated successfully");
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<Page<CustomerDTO>> getAllCustomer(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
-        Pageable pageable = PageRequest.of(page, size);
-        Page<CustomerDTO> customerPage = customerService.getAllCustomer(pageable);
+    @PutMapping("/change-enabled/{customerId}")
+    public ResponseEntity<CustomerDTO> changeEnabled(
+            @PathVariable Long customerId) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(customerPage);
+                .body(customerService.changeEnabled(customerId));
     }
+
+//    @GetMapping("/all")
+//    public ResponseEntity<Page<CustomerDTO>> getAllCustomers(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size,
+//            @RequestParam(required = false) String status,
+//            @RequestParam(required = false) String customerName) {
+//        Pageable pageable = PageRequest.of(page, size);
+//        Page<CustomerDTO> customerPage;
+//        long totalActiveCustomers = 0;
+//        long totalPassiveCustomers = 0;
+//
+//        if ("active".equalsIgnoreCase(status)) {
+//            if (customerName != null && !customerName.isEmpty()) {
+//                customerPage = customerService.getActiveCustomersByCustomerNameContaining(customerName, pageable);
+//            } else {
+//                customerPage = customerService.getAllActiveCustomers(pageable);
+//            }
+//        } else if ("passive".equalsIgnoreCase(status)) {
+//            if (customerName != null && !customerName.isEmpty()) {
+//                customerPage = customerService.getPassiveCustomersByCustomerNameContaining(customerName, pageable);
+//            } else {
+//                customerPage = customerService.getAllPassiveCustomers(pageable);
+//            }
+//        } else {
+//            if (customerName != null && !customerName.isEmpty()) {
+//                customerPage = customerService.getAllCustomersByCustomerNameContaining(customerName, pageable);
+//            } else {
+//                customerPage = customerService.getAllCustomers(pageable);
+//            }
+//        }
+//        totalActiveCustomers = customerService.countAllActiveCustomers();
+//        totalPassiveCustomers = customerService.countAllPassiveCustomers();
+//
+//        CustomPage<CustomerDTO> customPage = new CustomPage<>(
+//                customerPage.getContent(), totalActiveCustomers, totalPassiveCustomers);
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .body(customPage);
+//    }
 
     @GetMapping("/{customerId}")
     public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable Long customerId) {

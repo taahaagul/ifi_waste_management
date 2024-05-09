@@ -1,10 +1,7 @@
 package com.taahaagul.ifiwastemanagement.service;
 
-import com.taahaagul.ifiwastemanagement.dto.CarDTO;
-import com.taahaagul.ifiwastemanagement.dto.CustomerDTO;
-import com.taahaagul.ifiwastemanagement.dto.ZoneDTO;
+import com.taahaagul.ifiwastemanagement.dto.*;
 import com.taahaagul.ifiwastemanagement.entity.Branch;
-import com.taahaagul.ifiwastemanagement.entity.Car;
 import com.taahaagul.ifiwastemanagement.entity.Customer;
 import com.taahaagul.ifiwastemanagement.entity.Zone;
 import com.taahaagul.ifiwastemanagement.exception.IllegalOperationException;
@@ -20,15 +17,15 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ZoneService {
 
+    private final FilterSpecificationService<Zone> zoneFilterSpecificationService;
     private final ZoneRepository zoneRepository;
     private final ZoneMapper zoneMapper;
     private final CarMapper carMapper;
@@ -46,12 +43,6 @@ public class ZoneService {
         Zone savedZone = zoneMapper.mapToZone(zoneDTO, new Zone());
         savedZone.setBranch(foundedBranch);
         return zoneMapper.mapToZoneDTO(zoneRepository.save(savedZone));
-    }
-
-    public Page<ZoneDTO> getAllZone(Pageable pageable) {
-        Page<Zone> zones = zoneRepository.findAll(pageable);
-
-        return zones.map(zoneMapper::mapToZoneDTO);
     }
 
     @Transactional
@@ -83,6 +74,16 @@ public class ZoneService {
         zoneRepository.save(foundedZone);
     }
 
+    public Page<ZoneDTO> getAllZones(RequestDTO requestDTO) {
+        Specification<Zone> searchSpecification =
+                zoneFilterSpecificationService.getSearchSpecification(requestDTO.getSearchRequestDto(), requestDTO.getGlobalOperator());
+
+        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDto());
+
+        return zoneRepository.findAll(searchSpecification, pageable)
+                .map(zoneMapper::mapToZoneDTO);
+    }
+
     public ZoneDTO getZoneById(Long id) {
         Zone foundedZone = zoneRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Zone", "id", id.toString()));
@@ -94,12 +95,5 @@ public class ZoneService {
         Page<Customer> customers = customerRepository.findByZoneId(zoneId, pageable);
 
         return customers.map(customerMapper::mapToCustomerDTO);
-    }
-
-    public List<CarDTO> getZoneCars(Long zoneId) {
-        List<Car> cars = carRepository.findByZoneId(zoneId);
-
-        return cars.stream().map(carMapper::mapToCarDTO)
-                .collect(Collectors.toList());
     }
 }

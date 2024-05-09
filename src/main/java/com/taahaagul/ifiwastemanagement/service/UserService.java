@@ -1,6 +1,6 @@
 package com.taahaagul.ifiwastemanagement.service;
 
-import com.taahaagul.ifiwastemanagement.dto.UserDTO;
+import com.taahaagul.ifiwastemanagement.dto.*;
 import com.taahaagul.ifiwastemanagement.entity.Car;
 import com.taahaagul.ifiwastemanagement.entity.Role;
 import com.taahaagul.ifiwastemanagement.entity.User;
@@ -10,20 +10,21 @@ import com.taahaagul.ifiwastemanagement.exception.RoleUnmathcedException;
 import com.taahaagul.ifiwastemanagement.mapper.UserMapper;
 import com.taahaagul.ifiwastemanagement.repository.CarRepository;
 import com.taahaagul.ifiwastemanagement.repository.UserRepository;
-import com.taahaagul.ifiwastemanagement.dto.ChangePasswordDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
+    private final FilterSpecificationService<User> userFilterSpecificationService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final AuthenticationService authenticationService;
@@ -34,15 +35,24 @@ public class UserService {
         return userMapper.mapToUserDTO(authenticationService.getCurrentUser());
     }
 
-    @Transactional(readOnly = true)
-    public List<UserDTO> getAllUsers() {
-        List<User> list = userRepository.findAll();
-        return list.stream()
-                .map(userMapper::mapToUserDTO)
-                .collect(Collectors.toList());
+    public Page<UserDTO> getAllUsers(RequestDTO requestDTO) {
+        Specification<User> searchSpecification =
+                userFilterSpecificationService.getSearchSpecification(requestDTO.getSearchRequestDto(), requestDTO.getGlobalOperator());
+
+        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDto());
+
+        Page<UserDTO> userPage = userRepository.findAll(searchSpecification, pageable)
+                .map(userMapper::mapToUserDTO);
+
+        Long totalActiveUsers = userRepository.countByEnabled(true);
+        Long totalPassiveUsers = userRepository.countByEnabled(false);
+
+        CustomPage customPage = new CustomPage(
+                userPage.getContent(), totalActiveUsers, totalPassiveUsers);
+
+        return customPage;
     }
 
-    @Transactional(readOnly = true)
     public UserDTO getAnyUser(Long userId) {
         User foundUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId.toString()));;
@@ -110,14 +120,13 @@ public class UserService {
             throw new RoleUnmathcedException(foundUser.getRole(), "Not Adjustable!");
         }
 
-        if(foundUser.isEnabled())
+        if (foundUser.isEnabled())
             foundUser.setEnabled(false);
         else
             foundUser.setEnabled(true);
 
         userRepository.save(foundUser);
     }
-
 
     public void assignUserCar(Long userId, Long carId) {
         User foundUser = userRepository.findById(userId)
@@ -127,6 +136,14 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Car", "carId", carId.toString()));
 
         foundUser.setCar(foundCar);
+        userRepository.save(foundUser);
+    }
+
+    public void changePasswordByAdmin(Long userId, ChangePasswordDTO request) {
+        User foundUser = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId.toString()));
+
+        foundUser.setPassword(passwordEncoder.encode(request.getNewPasw()));
         userRepository.save(foundUser);
     }
 }

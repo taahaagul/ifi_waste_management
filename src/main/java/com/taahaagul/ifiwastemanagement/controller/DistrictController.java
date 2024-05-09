@@ -2,6 +2,7 @@ package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.dto.BranchDTO;
 import com.taahaagul.ifiwastemanagement.dto.DistrictDTO;
+import com.taahaagul.ifiwastemanagement.dto.RequestDTO;
 import com.taahaagul.ifiwastemanagement.service.DistrictService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/TG/district")
@@ -23,10 +23,12 @@ public class DistrictController {
 
     private final DistrictService districtService;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<DistrictDTO>> getAllDistrict() {
+    @PostMapping("/all")
+    public ResponseEntity<Page<DistrictDTO>> getAllDistricts(
+            @RequestBody RequestDTO requestDTO) {
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(districtService.getAllDistrict());
+                .body(districtService.getAllDistricts(requestDTO));
     }
 
     @GetMapping("/{id}")

@@ -2,6 +2,8 @@ package com.taahaagul.ifiwastemanagement.service;
 
 import com.taahaagul.ifiwastemanagement.dto.BranchDTO;
 import com.taahaagul.ifiwastemanagement.dto.DistrictDTO;
+import com.taahaagul.ifiwastemanagement.dto.PageRequestDTO;
+import com.taahaagul.ifiwastemanagement.dto.RequestDTO;
 import com.taahaagul.ifiwastemanagement.entity.Branch;
 import com.taahaagul.ifiwastemanagement.entity.City;
 import com.taahaagul.ifiwastemanagement.entity.District;
@@ -15,15 +17,15 @@ import com.taahaagul.ifiwastemanagement.repository.DistrictRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class DistrictService {
 
+    private final FilterSpecificationService<District> districtFilterSpecificationService;
     private final DistrictRepository districtRepository;
     private final DistrictMapper districtMapper;
     private final CityRepository cityRepository;
@@ -37,16 +39,19 @@ public class DistrictService {
         City foundedCity = cityRepository.findById(districtDTO.getCityId())
                 .orElseThrow(() -> new ResourceNotFoundException("District", "cityId", districtDTO.getCityId().toString()));
         District savedDistrict = districtMapper.mapToDistrict(districtDTO, new District());
+        savedDistrict.setCity(foundedCity);
 
         return districtMapper.mapToDistrictDTO(districtRepository.save(savedDistrict));
     }
 
-    public List<DistrictDTO> getAllDistrict() {
-        List<District> districts = districtRepository.findAll();
+    public Page<DistrictDTO> getAllDistricts(RequestDTO requestDTO) {
+        Specification<District> searchSpecification =
+                districtFilterSpecificationService.getSearchSpecification(requestDTO.getSearchRequestDto(), requestDTO.getGlobalOperator());
 
-        return districts.stream()
-                .map(districtMapper::mapToDistrictDTO)
-                .collect(Collectors.toList());
+        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDto());
+
+        return districtRepository.findAll(searchSpecification, pageable)
+                .map(districtMapper::mapToDistrictDTO);
     }
 
     public void deleteDistrict(Long id) {
@@ -91,4 +96,5 @@ public class DistrictService {
 
         return branches.map(branchMapper::mapToBranchDTO);
     }
+
 }

@@ -1,7 +1,7 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
-import com.taahaagul.ifiwastemanagement.dto.CarDTO;
 import com.taahaagul.ifiwastemanagement.dto.CustomerDTO;
+import com.taahaagul.ifiwastemanagement.dto.RequestDTO;
 import com.taahaagul.ifiwastemanagement.dto.ZoneDTO;
 import com.taahaagul.ifiwastemanagement.service.ZoneService;
 import jakarta.validation.Valid;
@@ -14,11 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
-
-
 @RestController
 @RequestMapping("/TG/zone")
 @RequiredArgsConstructor
@@ -27,16 +22,12 @@ public class ZoneController {
 
     private final ZoneService zoneService;
 
-    @GetMapping("/all")
-    public ResponseEntity<Page<ZoneDTO>> getAllZone(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
-        Pageable pageable = PageRequest.of(page, size);
-        Page<ZoneDTO> zonePage = zoneService.getAllZone(pageable);
+    @PostMapping("/all")
+    public ResponseEntity<Page<ZoneDTO>> getAllZones(
+            @RequestBody RequestDTO requestDTO) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(zonePage);
+                .body(zoneService.getAllZones(requestDTO));
     }
 
     @GetMapping("/{id}")
@@ -87,13 +78,5 @@ public class ZoneController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(zoneCustomers);
-    }
-
-    @GetMapping("/{zoneId}/cars")
-    public ResponseEntity<List<CarDTO>> getZoneCars(
-            @PathVariable Long zoneId) {
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(zoneService.getZoneCars(zoneId));
     }
 }

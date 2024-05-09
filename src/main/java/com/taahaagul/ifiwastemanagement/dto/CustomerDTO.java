@@ -21,14 +21,14 @@ public class CustomerDTO {
     private String houseNumber;
     @NotEmpty(message = "mobileNumber cannot be null or empty")
     private String mobileNumber;
-    @NotEmpty(message = "specialRate cannot be null or empty")
-    private String specialRate;
     @NotEmpty(message = "latitude cannot be null or empty")
     private String latitude;
     @NotEmpty(message = "longitude cannot be null or empty")
     private String longitude;
     @NotNull(message = "status cannot be null")
     private boolean enabled;
+    @NotNull(message = "customerRate cannot be null")
+    private Integer customerRate;
 
     private String zoneName;
     private Long zoneId;
@@ -36,6 +36,8 @@ public class CustomerDTO {
     private Long branchId;
     private String districtName;
     private Long districtId;
+    private boolean operation;
+    private LocalDateTime lastOperationDate;
     private LocalDateTime createdAt;
     private String createdBy;
     private LocalDateTime updatedAt;

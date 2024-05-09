@@ -2,13 +2,14 @@ package com.taahaagul.ifiwastemanagement.mapper;
 
 import com.taahaagul.ifiwastemanagement.dto.UserDTO;
 import com.taahaagul.ifiwastemanagement.entity.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
 
     public UserDTO mapToUserDTO(User user) {
-        return UserDTO.builder()
+        UserDTO.UserDTOBuilder builder = UserDTO.builder()
                 .id(user.getId())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
@@ -19,8 +20,9 @@ public class UserMapper {
                 .createdAt(user.getCreatedAt())
                 .createdBy(user.getCreatedBy())
                 .updatedAt(user.getUpdatedAt())
-                .updatedBy(user.getUpdatedBy())
-                .build();
+                .updatedBy(user.getUpdatedBy());
+
+        return builder.build();
     }
 
     public User mapToUser(UserDTO userDTO, User user) {

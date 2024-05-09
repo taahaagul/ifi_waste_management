@@ -1,6 +1,7 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.dto.BranchDTO;
+import com.taahaagul.ifiwastemanagement.dto.RequestDTO;
 import com.taahaagul.ifiwastemanagement.dto.ZoneDTO;
 import com.taahaagul.ifiwastemanagement.service.BranchService;
 import jakarta.validation.Valid;
@@ -21,16 +22,12 @@ public class BranchController {
 
     private final BranchService branchService;
 
-    @GetMapping("/all")
-    public ResponseEntity<Page<BranchDTO>> getAllBranch(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
-        Pageable pageable = PageRequest.of(page, size);
-        Page<BranchDTO> branchPage = branchService.getAllBranch(pageable);
+    @PostMapping("/all")
+    public ResponseEntity<Page<BranchDTO>> getAllBranches(
+            @RequestBody RequestDTO requestDTO) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(branchPage);
+                .body(branchService.getAllBranches(requestDTO));
     }
 
     @GetMapping("/{id}")
@@ -63,11 +60,11 @@ public class BranchController {
     }
 
     @PutMapping("/{branchId}/district/{districtId}")
-    public ResponseEntity<BranchDTO> assignBranchZone(
+    public ResponseEntity<BranchDTO> assignBranchDistrict(
             @PathVariable Long branchId,
             @PathVariable Long districtId) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(branchService.assignBranchZone(branchId, districtId));
+                .body(branchService.assignBranchDistrict(branchId, districtId));
     }
 
     @GetMapping("/{branchId}/zones")

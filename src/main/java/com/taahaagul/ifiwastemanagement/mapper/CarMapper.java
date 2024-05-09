@@ -1,8 +1,14 @@
 package com.taahaagul.ifiwastemanagement.mapper;
 
 import com.taahaagul.ifiwastemanagement.dto.CarDTO;
+import com.taahaagul.ifiwastemanagement.dto.UserDTO;
+import com.taahaagul.ifiwastemanagement.dto.liteDto.UserLiteDTO;
 import com.taahaagul.ifiwastemanagement.entity.Car;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class CarMapper {
@@ -28,6 +34,19 @@ public class CarMapper {
             builder.zoneName(car.getZone().getZoneName())
                     .zoneId(car.getZone().getId());
         }
+
+        if (car.getUsers() != null) {
+            List<UserLiteDTO> userLiteDTOs = car.getUsers().stream()
+                    .map(user -> UserLiteDTO.builder()
+                            .id(user.getId())
+                            .username(user.getUsername())
+                            .mobilePhone(user.getMobilePhone())
+                            .enabled(user.isEnabled())
+                            .build())
+                    .collect(Collectors.toList());
+            builder.users(userLiteDTOs);
+        }
+
         return builder.build();
     }
 

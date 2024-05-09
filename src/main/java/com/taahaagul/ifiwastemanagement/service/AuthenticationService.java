@@ -3,8 +3,10 @@ package com.taahaagul.ifiwastemanagement.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taahaagul.ifiwastemanagement.config.JwtService;
 import com.taahaagul.ifiwastemanagement.entity.*;
+import com.taahaagul.ifiwastemanagement.exception.IllegalOperationException;
 import com.taahaagul.ifiwastemanagement.exception.IncorrectValueException;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
+import com.taahaagul.ifiwastemanagement.exception.RoleUnmathcedException;
 import com.taahaagul.ifiwastemanagement.repository.UserRepository;
 import com.taahaagul.ifiwastemanagement.repository.VerificationTokenRepository;
 import com.taahaagul.ifiwastemanagement.dto.ForgetPasswordDTO;
@@ -41,6 +43,7 @@ public class AuthenticationService {
     private final MailService mailService;
 
     public void register(RegisterDTO request) {
+
         Optional<User> existingUserName = userRepository.findByUserName(request.getUserName());
         if(existingUserName.isPresent())
             throw new IncorrectValueException("Username already exist!");
@@ -50,13 +53,19 @@ public class AuthenticationService {
             throw new IncorrectValueException("Email already exist!");
         }
 
+        if(request.getRole().equals("SUPER_ADMIN"))
+            throw new RoleUnmathcedException(Role.SUPER_ADMIN, "Not Adjustable!");
+
+        if (!Role.isValidRole(request.getRole()))
+            throw new IllegalOperationException("Role is not valid!");
+
         var user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .userName(request.getUserName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .role(Role.valueOf(request.getRole()))
                 .enabled(true)
                 .build();
         userRepository.save(user);

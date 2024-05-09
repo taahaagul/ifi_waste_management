@@ -1,7 +1,6 @@
 package com.taahaagul.ifiwastemanagement.service;
 
-import com.taahaagul.ifiwastemanagement.dto.CarDTO;
-import com.taahaagul.ifiwastemanagement.dto.UserDTO;
+import com.taahaagul.ifiwastemanagement.dto.*;
 import com.taahaagul.ifiwastemanagement.entity.Car;
 import com.taahaagul.ifiwastemanagement.entity.User;
 import com.taahaagul.ifiwastemanagement.entity.Zone;
@@ -15,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CarService {
 
+    private final FilterSpecificationService<Car> carFilterSpecificationService;
     private final ZoneRepository zoneRepository;
     private final CarMapper carMapper;
     private final UserMapper userMapper;
@@ -61,11 +62,6 @@ public class CarService {
         carRepository.save(foundedCar);
     }
 
-    public Page<CarDTO> getAllCar(Pageable pageable) {
-        Page<Car> cars = carRepository.findAll(pageable);
-
-        return cars.map(carMapper::mapToCarDTO);
-    }
 
     @Transactional
     public void deleteCar(Long carId) {
@@ -77,14 +73,10 @@ public class CarService {
         carRepository.delete(foundedCar);
     }
 
-    public List<UserDTO> getCarUsers(Long carId) {
-        Car foundedCar = carRepository.findById(carId)
-                .orElseThrow(() -> new ResourceNotFoundException("Car", "carId", carId.toString()));
-        List<User> users = foundedCar.getUsers();
+    public Page<UserDTO> getCarUsers(Long carId, Pageable pageable) {
+        Page<User> foundedUsers = userRepository.findByCarId(carId, pageable);
 
-        return users.stream()
-                .map(userMapper::mapToUserDTO)
-                .toList();
+        return foundedUsers.map(userMapper::mapToUserDTO);
     }
 
     public CarDTO getAnyCar(Long carId) {
@@ -92,5 +84,23 @@ public class CarService {
                 .orElseThrow(() -> new ResourceNotFoundException("Car", "carId", carId.toString()));
 
         return carMapper.mapToCarDTO(foundedCar);
+    }
+
+    public Page<CarDTO> getAllCars(RequestDTO requestDTO) {
+        Specification<Car> searchSpecification =
+                carFilterSpecificationService.getSearchSpecification(requestDTO.getSearchRequestDto(), requestDTO.getGlobalOperator());
+
+        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDto());
+
+        Page<CarDTO> carPage = carRepository.findAll(searchSpecification, pageable)
+                .map(carMapper::mapToCarDTO);
+
+        Long totalActiveCars = carRepository.countByStatus(true);
+        Long totalPassiveCars = carRepository.countByStatus(false);
+
+        CustomPage<CarDTO> customPage = new CustomPage<>(
+                carPage.getContent(), totalActiveCars, totalPassiveCars);
+
+        return customPage;
     }
 }

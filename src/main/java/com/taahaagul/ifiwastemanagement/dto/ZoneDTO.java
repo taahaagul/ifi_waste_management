@@ -1,13 +1,14 @@
 package com.taahaagul.ifiwastemanagement.dto;
 
+import com.taahaagul.ifiwastemanagement.dto.liteDto.CarLiteDTO;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter @Setter @ToString
 @Builder
@@ -28,4 +29,6 @@ public class ZoneDTO {
     private String createdBy;
     private LocalDateTime updatedAt;
     private String updatedBy;
+
+    private List<CarLiteDTO> cars;
 }

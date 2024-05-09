@@ -1,5 +1,6 @@
 package com.taahaagul.ifiwastemanagement.dto;
 
+import com.taahaagul.ifiwastemanagement.dto.liteDto.UserLiteDTO;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter @Setter @ToString
 @Builder
@@ -40,4 +42,6 @@ public class CarDTO {
     private String createdBy;
     private LocalDateTime updatedAt;
     private String updatedBy;
+
+    private List<UserLiteDTO> users;
 }

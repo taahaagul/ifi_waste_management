@@ -2,6 +2,8 @@ package com.taahaagul.ifiwastemanagement.service;
 
 import com.taahaagul.ifiwastemanagement.dto.CityDTO;
 import com.taahaagul.ifiwastemanagement.dto.DistrictDTO;
+import com.taahaagul.ifiwastemanagement.dto.PageRequestDTO;
+import com.taahaagul.ifiwastemanagement.dto.RequestDTO;
 import com.taahaagul.ifiwastemanagement.entity.City;
 import com.taahaagul.ifiwastemanagement.entity.Country;
 import com.taahaagul.ifiwastemanagement.entity.District;
@@ -15,15 +17,15 @@ import com.taahaagul.ifiwastemanagement.repository.DistrictRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CityService {
 
+    private final FilterSpecificationService<City> cityFilterSpecificationService;
     private final CountryRepository countryRepository;
     private final CityRepository cityRepository;
     private final DistrictRepository districtRepository;
@@ -43,12 +45,14 @@ public class CityService {
         return cityMapper.mapToCityDTO(cityRepository.save(savedCity));
     }
 
-    public List<CityDTO> getAllCity() {
-        List<City> cities = cityRepository.findAll();
+    public Page<CityDTO> getAllCities(RequestDTO requestDTO) {
+        Specification<City> searchSpecification =
+                cityFilterSpecificationService.getSearchSpecification(requestDTO.getSearchRequestDto(), requestDTO.getGlobalOperator());
 
-        return cities.stream()
-                .map(cityMapper::mapToCityDTO)
-                .collect(Collectors.toList());
+        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDto());
+
+        return cityRepository.findAll(searchSpecification, pageable)
+                .map(cityMapper::mapToCityDTO);
     }
 
     public void deleteCity(Long id) {

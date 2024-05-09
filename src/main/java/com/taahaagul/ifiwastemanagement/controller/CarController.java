@@ -1,6 +1,7 @@
 package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.dto.CarDTO;
+import com.taahaagul.ifiwastemanagement.dto.RequestDTO;
 import com.taahaagul.ifiwastemanagement.dto.UserDTO;
 import com.taahaagul.ifiwastemanagement.service.CarService;
 import jakarta.validation.Valid;
@@ -22,6 +23,14 @@ import java.util.List;
 public class CarController {
 
     private final CarService carService;
+
+    @PostMapping("/all")
+    public ResponseEntity<Page<CarDTO>> getAllCars(
+            @RequestBody RequestDTO requestDTO) {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(carService.getAllCars(requestDTO));
+    }
 
     @PostMapping("/create")
     public ResponseEntity<CarDTO> createCar(
@@ -49,18 +58,6 @@ public class CarController {
                 .body("Car zone updated successfully");
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<Page<CarDTO>> getAllCar(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
-        Pageable pageable = PageRequest.of(page, size);
-        Page<CarDTO> carPage = carService.getAllCar(pageable);
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(carPage);
-    }
-
     @GetMapping("/{carId}")
     public ResponseEntity<CarDTO> getAnyCar(@PathVariable Long carId) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -77,9 +74,14 @@ public class CarController {
     }
 
     @GetMapping("/{carId}/users")
-    public ResponseEntity<List<UserDTO>> getCarUsers(
-            @PathVariable Long carId) {
+    public ResponseEntity<Page<UserDTO>> getCarUsers(
+            @PathVariable Long carId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserDTO> carUsers = carService.getCarUsers(carId, pageable);
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(carService.getCarUsers(carId));
+                .body(carUsers);
     }
 }

@@ -26,16 +26,14 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationDTO> authenticate(
-            @Valid @RequestBody LoginDTO request
-    ) {
+            @Valid @RequestBody LoginDTO request) {
         return ResponseEntity.ok(service.authenticate(request));
     }
 
     @PostMapping("/refresh/token")
     public void refreshToken(
             HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
+            HttpServletResponse response) throws IOException {
         service.refreshToken(request, response);
     }
 

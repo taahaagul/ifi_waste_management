@@ -1,6 +1,7 @@
 package com.taahaagul.ifiwastemanagement.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,8 +26,12 @@ public class User extends BaseEntity implements UserDetails {
     private Long id;
     private String firstName;
     private String lastName;
+    @Column(unique = true)
     private String userName;
+    @Column(unique = true)
+    @Email
     private String email;
+    private String mobilePhone;
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -37,6 +42,18 @@ public class User extends BaseEntity implements UserDetails {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Car car;
+
+    @OneToMany(mappedBy = "user",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<Operation> operations;
+
+    @OneToMany(mappedBy = "user",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<Payment> payments;
 
     public String getUserName() {
         return userName;

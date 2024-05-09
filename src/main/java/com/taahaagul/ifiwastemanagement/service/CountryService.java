@@ -2,6 +2,8 @@ package com.taahaagul.ifiwastemanagement.service;
 
 import com.taahaagul.ifiwastemanagement.dto.CityDTO;
 import com.taahaagul.ifiwastemanagement.dto.CountryDTO;
+import com.taahaagul.ifiwastemanagement.dto.PageRequestDTO;
+import com.taahaagul.ifiwastemanagement.dto.RequestDTO;
 import com.taahaagul.ifiwastemanagement.entity.City;
 import com.taahaagul.ifiwastemanagement.entity.Country;
 import com.taahaagul.ifiwastemanagement.exception.IllegalOperationException;
@@ -13,15 +15,15 @@ import com.taahaagul.ifiwastemanagement.repository.CountryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CountryService {
 
+    private final FilterSpecificationService<Country> countryFilterSpecificationService;
     private final CountryRepository countryRepository;
     private final CityRepository cityRepository;
     private final CountryMapper countryMapper;
@@ -32,12 +34,14 @@ public class CountryService {
         return countryMapper.mapToCountryDTO(countryRepository.save(savedCountry));
     }
 
-    public List<CountryDTO> getAllCountry() {
-        List<Country> countries = countryRepository.findAll();
+    public Page<CountryDTO> getAllCountries(RequestDTO requestDTO) {
+        Specification<Country> searchSpecification =
+                countryFilterSpecificationService.getSearchSpecification(requestDTO.getSearchRequestDto(), requestDTO.getGlobalOperator());
 
-        return countries.stream()
-                .map(countryMapper::mapToCountryDTO)
-                .collect(Collectors.toList());
+        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDto());
+
+        return countryRepository.findAll(searchSpecification, pageable)
+                .map(countryMapper::mapToCountryDTO);
     }
 
     public void deleteCountry(Long id) {
@@ -63,7 +67,7 @@ public class CountryService {
         Country foundedCountry = countryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Country", "id", id.toString()));
 
-       return countryMapper.mapToCountryDTO(foundedCountry);
+        return countryMapper.mapToCountryDTO(foundedCountry);
     }
 
     public Page<CityDTO> getCountryCities(Long countryId, Pageable pageable) {

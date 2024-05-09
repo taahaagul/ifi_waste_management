@@ -1,8 +1,13 @@
 package com.taahaagul.ifiwastemanagement.mapper;
 
+import com.taahaagul.ifiwastemanagement.dto.liteDto.CarLiteDTO;
+import com.taahaagul.ifiwastemanagement.dto.liteDto.UserLiteDTO;
 import com.taahaagul.ifiwastemanagement.dto.ZoneDTO;
 import com.taahaagul.ifiwastemanagement.entity.Zone;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class ZoneMapper {
@@ -25,6 +30,24 @@ public class ZoneMapper {
                 builder.districtId(zone.getBranch().getDistrict().getId())
                         .districtName(zone.getBranch().getDistrict().getDistrictName());
             }
+        }
+
+        if (zone.getCars() != null) {
+            List<CarLiteDTO> carLiteDTOs = zone.getCars().stream()
+                    .map(car -> CarLiteDTO.builder()
+                            .id(car.getId())
+                            .targoNo(car.getTargoNo())
+                            .status(car.isStatus())
+                            .users(car.getUsers().stream()
+                                    .map(user -> UserLiteDTO.builder()
+                                            .id(user.getId())
+                                            .username(user.getUsername())
+                                            .mobilePhone(user.getMobilePhone())
+                                            .enabled(user.isEnabled())
+                                            .build())
+                                    .collect(Collectors.toList()))
+                            .build()).collect(Collectors.toList());
+            builder.cars(carLiteDTOs);
         }
         return builder.build();
     }

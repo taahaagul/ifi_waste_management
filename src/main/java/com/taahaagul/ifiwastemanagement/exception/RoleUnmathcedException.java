@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class RoleUnmathcedException extends RuntimeException{
 
     public RoleUnmathcedException(Role role, String message) {
-        super(message);
+        super(role.name() + " " + message);
     }
 }

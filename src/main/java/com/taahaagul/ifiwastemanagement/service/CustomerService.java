@@ -1,6 +1,9 @@
 package com.taahaagul.ifiwastemanagement.service;
 
+import com.taahaagul.ifiwastemanagement.dto.CustomPage;
 import com.taahaagul.ifiwastemanagement.dto.CustomerDTO;
+import com.taahaagul.ifiwastemanagement.dto.PageRequestDTO;
+import com.taahaagul.ifiwastemanagement.dto.RequestDTO;
 import com.taahaagul.ifiwastemanagement.entity.Customer;
 import com.taahaagul.ifiwastemanagement.entity.Zone;
 import com.taahaagul.ifiwastemanagement.exception.ResourceNotFoundException;
@@ -10,6 +13,7 @@ import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 
@@ -17,6 +21,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomerService {
 
+    private final FilterSpecificationService<Customer> customerFilterSpecificationService;
     private final CustomerRepository customerRepository;
     private final CustomerMapper customerMapper;
     private final ZoneRepository zoneRepository;
@@ -29,6 +34,7 @@ public class CustomerService {
 
         Customer savedCustomer = customerMapper.mapToCustomer(customerDTO, new Customer());
         savedCustomer.setZone(foundedZone);
+        savedCustomer.setOperation(false);
         return customerMapper.mapToCustomerDTO(customerRepository.save(savedCustomer));
     }
 
@@ -48,12 +54,6 @@ public class CustomerService {
         customerRepository.delete(foundedCustomer);
     }
 
-    public Page<CustomerDTO> getAllCustomer(Pageable pageable) {
-        Page<Customer> customers = customerRepository.findAll(pageable);
-
-        return customers.map(customerMapper::mapToCustomerDTO);
-    }
-
     public void assignCustomerZone(Long customerId, Long zoneId) {
         Customer foundedCustomer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer", "customerId", customerId.toString()));
@@ -63,6 +63,38 @@ public class CustomerService {
 
         foundedCustomer.setZone(foundedZone);
         customerRepository.save(foundedCustomer);
+    }
+
+    public CustomerDTO changeEnabled(Long customerId) {
+        Customer foundedCustomer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer", "customerId", customerId.toString()));
+
+        if (foundedCustomer.isEnabled()) {
+
+            foundedCustomer.setEnabled(false);
+        } else {
+            foundedCustomer.setEnabled(true);
+        }
+        return customerMapper.mapToCustomerDTO(customerRepository.save(foundedCustomer));
+    }
+
+
+    public Page<CustomerDTO> getAllCustomers(RequestDTO requestDTO) {
+        Specification<Customer> searchSpecification =
+                customerFilterSpecificationService.getSearchSpecification(requestDTO.getSearchRequestDto(), requestDTO.getGlobalOperator());
+
+        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDto());
+
+        Page<CustomerDTO> customerPage = customerRepository.findAll(searchSpecification, pageable)
+                .map(customerMapper::mapToCustomerDTO);
+
+        Long totalActiveCustomers = customerRepository.countByEnabled(true);
+        Long totalPassiveCustomers = customerRepository.countByEnabled(false);
+
+        CustomPage<CustomerDTO> customPage = new CustomPage<>(
+                customerPage.getContent(), totalActiveCustomers, totalPassiveCustomers);
+
+        return customPage;
     }
 
     public CustomerDTO getCustomerById(Long customerId) {

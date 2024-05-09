@@ -18,4 +18,6 @@ public class RegisterDTO {
     private String email;
     @NotBlank(message = "password is required")
     private String password;
+    @NotBlank(message = "role is required")
+    private String role;
 }

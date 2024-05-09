@@ -2,6 +2,7 @@ package com.taahaagul.ifiwastemanagement.controller;
 
 import com.taahaagul.ifiwastemanagement.dto.CityDTO;
 import com.taahaagul.ifiwastemanagement.dto.CountryDTO;
+import com.taahaagul.ifiwastemanagement.dto.RequestDTO;
 import com.taahaagul.ifiwastemanagement.service.CountryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/TG/country")
@@ -23,10 +23,12 @@ public class CountryController {
 
     private final CountryService countryService;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<CountryDTO>> getAllCountry() {
+    @PostMapping("/all")
+    public ResponseEntity<Page<CountryDTO>> getAllCountries(
+            @RequestBody RequestDTO requestDTO) {
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(countryService.getAllCountry());
+                .body(countryService.getAllCountries(requestDTO));
     }
 
     @GetMapping("/{id}")

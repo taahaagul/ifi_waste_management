@@ -1,6 +1,8 @@
 package com.taahaagul.ifiwastemanagement.service;
 
 import com.taahaagul.ifiwastemanagement.dto.BranchDTO;
+import com.taahaagul.ifiwastemanagement.dto.PageRequestDTO;
+import com.taahaagul.ifiwastemanagement.dto.RequestDTO;
 import com.taahaagul.ifiwastemanagement.dto.ZoneDTO;
 import com.taahaagul.ifiwastemanagement.entity.Branch;
 import com.taahaagul.ifiwastemanagement.entity.District;
@@ -15,12 +17,14 @@ import com.taahaagul.ifiwastemanagement.repository.ZoneRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class BranchService {
 
+    private final FilterSpecificationService<Branch> branchFilterSpecificationService;
     private final BranchRepository branchRepository;
     private final BranchMapper branchMapper;
     private final ZoneMapper zoneMapper;
@@ -38,10 +42,14 @@ public class BranchService {
         return branchMapper.mapToBranchDTO(branchRepository.save(savedBranch));
     }
 
-    public Page<BranchDTO> getAllBranch(Pageable pageable) {
-        Page<Branch> branches = branchRepository.findAll(pageable);
+    public Page<BranchDTO> getAllBranches(RequestDTO requestDTO) {
+        Specification<Branch> searchSpecification =
+                branchFilterSpecificationService.getSearchSpecification(requestDTO.getSearchRequestDto(), requestDTO.getGlobalOperator());
 
-        return branches.map(branchMapper::mapToBranchDTO);
+        Pageable pageable = new PageRequestDTO().getPageable(requestDTO.getPageRequestDto());
+
+        return branchRepository.findAll(searchSpecification, pageable)
+                .map(branchMapper::mapToBranchDTO);
     }
 
     public BranchDTO getBranchById(Long id) {
@@ -70,7 +78,7 @@ public class BranchService {
         return branchMapper.mapToBranchDTO(branchRepository.save(foundedBranch));
     }
 
-    public BranchDTO assignBranchZone(Long branchId, Long districtId) {
+    public BranchDTO assignBranchDistrict(Long branchId, Long districtId) {
         Branch foundedBranch = branchRepository.findById(branchId)
                 .orElseThrow(() -> new ResourceNotFoundException("Branch", "id", branchId.toString()));
         District foundedDistrict = districtRepository.findById(districtId)

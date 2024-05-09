@@ -16,10 +16,12 @@ public class CustomerMapper {
                 .customerName(customer.getCustomerName())
                 .houseNumber(customer.getHouseNumber())
                 .mobileNumber(customer.getMobileNumber())
-                .specialRate(customer.getSpecialRate())
                 .latitude(customer.getLatitude())
                 .longitude(customer.getLongitude())
                 .enabled(customer.isEnabled())
+                .customerRate(customer.getCustomerRate())
+                .operation(customer.isOperation())
+                .lastOperationDate(customer.getLastOperationDate())
                 .createdAt(customer.getCreatedAt())
                 .createdBy(customer.getCreatedBy())
                 .updatedAt(customer.getUpdatedAt())
@@ -50,10 +52,10 @@ public class CustomerMapper {
         customer.setCustomerName(customerDTO.getCustomerName());
         customer.setHouseNumber(customerDTO.getHouseNumber());
         customer.setMobileNumber(customerDTO.getMobileNumber());
-        customer.setSpecialRate(customerDTO.getSpecialRate());
         customer.setLatitude(customerDTO.getLatitude());
         customer.setLongitude(customerDTO.getLongitude());
         customer.setEnabled(customerDTO.isEnabled());
+        customer.setCustomerRate(customerDTO.getCustomerRate());
         return customer;
     }
 }
